@@ -2,14 +2,19 @@
 
 #include <iostream>
 #include <SDL.h>
+#include <SDL_image.h>
+
 
 //this is the main class of the game
 class Game{
 private:
+
 	bool isRunning;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 public:
+
+
 	Game();
 	Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);
 	~Game();
