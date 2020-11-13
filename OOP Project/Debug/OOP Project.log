@@ -1,1 +1,3 @@
-﻿  OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe
+﻿  Game.cpp
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(4,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe

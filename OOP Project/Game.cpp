@@ -1,4 +1,11 @@
+#include <iostream>
 #include "Game.h"
+#include "TextureManager.h"
+#include "GameObject.h";
+
+GameObject* test;
+
+SDL_Renderer* Game::renderer = nullptr;
 
 Game::Game()
 {
@@ -41,6 +48,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	else {
 		isRunning = false;
 	}
+
+	test = new GameObject("assets/index.png", 0 ,0);
+
 }
 
 void Game::handleEvents(){
@@ -57,17 +67,16 @@ void Game::handleEvents(){
 	}
 }
 
+void Game::update(int frameTime) {
+	test->Update();
+}
+
+
 void Game::render(){
 	SDL_RenderClear(renderer);
-
-	//render things here
-
+	test->Render();
 	SDL_RenderPresent(renderer);
 }
 
 
-void Game::update(){
-	
-
-}
 
