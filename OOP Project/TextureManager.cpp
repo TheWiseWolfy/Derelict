@@ -3,9 +3,8 @@
 
 #include "TextureManager.h"
 
-#include "Game.h"
 
-SDL_Texture* TextureManager::LoadTexture(const char* texture){
+SDL_Texture* TextureManager::LoadTexture(const char* texture, SDL_Renderer* ren){
 
     //Initialize PNG loading
  
@@ -16,7 +15,7 @@ SDL_Texture* TextureManager::LoadTexture(const char* texture){
         std::cout <<  "Unable to load image.! SDL_image Error: \n" <<  IMG_GetError();
     }
 
-    SDL_Texture* tex = SDL_CreateTextureFromSurface(Game::renderer, tempSurface);
+    SDL_Texture* tex = SDL_CreateTextureFromSurface(ren, tempSurface);
     
     SDL_FreeSurface(tempSurface);  //does not follow RAII
     return tex;

@@ -4,12 +4,14 @@
 #include <thread>
 #include "Game.h"
 
-Uint32 frameStart;
-Uint32 frameTime = 0;
+float frameStart;
+float frameTime = 0;
 
 int main(int argc, char* args[]) {
 
 	Game game("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+
+
 
 	//Main game loop
 	while (game.running()) {
@@ -27,5 +29,12 @@ int main(int argc, char* args[]) {
 	}
 
 
+
+
+
+	// And here we simulate a game loop:
+
+
 	return 0;
 }
+

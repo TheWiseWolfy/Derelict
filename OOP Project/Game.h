@@ -1,15 +1,18 @@
 #pragma once
 
 #include <SDL.h>
+#include "EntityManager.h"
 
 //this is the main class of the game
 class Game{
 private:
 
 	bool isRunning;
-	SDL_Window *window;
+	
 public:
-	static SDL_Renderer* renderer;
+	SDL_Window* window;
+	SDL_Renderer* renderer;
+	EntityManager entityManager;
 
 	Game();
 	Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);
@@ -19,7 +22,7 @@ public:
 	void init(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);
 	void handleEvents();
 	void render();
-	void update(int frameTime);
+	void update(float frameTime);
 
 	inline bool running() { return isRunning; }
 };

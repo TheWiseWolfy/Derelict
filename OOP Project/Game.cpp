@@ -1,11 +1,6 @@
 #include <iostream>
 #include "Game.h"
 #include "TextureManager.h"
-#include "GameObject.h";
-
-GameObject* test;
-
-SDL_Renderer* Game::renderer = nullptr;
 
 Game::Game()
 {
@@ -49,8 +44,14 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 		isRunning = false;
 	}
 
-	test = new GameObject("assets/index.png", 0 ,0);
+	// We create an entity and get a reference to it:
+	auto& entity(entityManager.addEntity());
 
+	// We create components:
+	auto& cCounter = entity.addComponent<CounterComponent>();
+	auto& cKill(entity.addComponent<KillComponent>(cCounter));
+
+	auto& sprite(entity.addComponent<SimpleSprite>("assets/index.png", 0, 0, renderer));
 }
 
 void Game::handleEvents(){
@@ -67,14 +68,16 @@ void Game::handleEvents(){
 	}
 }
 
-void Game::update(int frameTime) {
-	test->Update();
+void Game::update(float frameTime) {
+	entityManager.update(frameTime);
 }
 
 
 void Game::render(){
 	SDL_RenderClear(renderer);
-	test->Render();
+
+	entityManager.draw();
+
 	SDL_RenderPresent(renderer);
 }
 
