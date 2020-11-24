@@ -9,9 +9,9 @@ private:
 	bool isRunning;
 public:
 	//Game variables
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	EntityManager entityManager;
+	static SDL_Window* window;
+	static SDL_Renderer* renderer;
+	static EntityManager entityManager;
 	static SDL_Event event;
 
 	Game();
@@ -20,9 +20,15 @@ public:
 	
 	//fuction used to initiate the SDL componets we require
 	void init(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);
+
+	//Game loop fuctions
 	void handleEvents();
 	void render();
 	void update(float frameTime);
+
+	//Auxiliary fuctions
+	void setInitialState();
+
 
 	inline bool running() { return isRunning; }
 };

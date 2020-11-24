@@ -3,7 +3,6 @@
 
 #include "TextureManager.h"
 
-
 SDL_Texture* TextureManager::LoadTexture(const char* texture, SDL_Renderer* ren){
 
     //Initialize PNG loading
@@ -19,4 +18,11 @@ SDL_Texture* TextureManager::LoadTexture(const char* texture, SDL_Renderer* ren)
     
     SDL_FreeSurface(tempSurface);  //does not follow RAII
     return tex;
+}
+
+SDL_Point TextureManager::getsize(SDL_Texture* texture)
+{
+    SDL_Point size;
+    SDL_QueryTexture(texture, NULL, NULL, &size.x, &size.y);
+    return size;
 }

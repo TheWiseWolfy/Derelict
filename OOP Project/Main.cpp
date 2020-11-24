@@ -9,7 +9,7 @@ float frameTime = 0;
 
 int main(int argc, char* args[]) {
 
-	Game game("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+	Game game("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
 
 
 

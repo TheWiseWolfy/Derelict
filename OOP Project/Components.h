@@ -1,54 +1,72 @@
 #pragma once
+
+#include <iostream>
+#include <math.h>
 #include "Vector2D.h"
 #include "Game.h"
 
-struct TranformComponent : public Component{
-private:
-	float xPos;
-	float yPos;
+using namespace std;
 
-public:
+struct TranformComponent : public Component{
     Vector2D position;
     Vector2D velocity;
+    float angle;
 
-	TranformComponent() {
+public:
+
+    TranformComponent() {
         position.x = 0;
         position.y = 0;
 
         velocity.x = 0;
         velocity.y = 0;
-	}
 
-	TranformComponent(float x, float y) {
+        angle = 0;
+    }
+    TranformComponent(float x, float y, float an) {
         position.x = x;
         position.y = y;
 
         velocity.x = 0;
         velocity.y = 0;
-	}
 
-    TranformComponent(float x, float y,float vx,float vy) {
+        angle = an;
+    }
+    TranformComponent(float x, float y, float vx, float vy, float an) {
         position.x = x;
         position.y = y;
 
         velocity.x = vx;
         velocity.y = vy;
-    } 
 
-    TranformComponent(const Vector2D& poz) {
+        angle = an;
+    }
+    TranformComponent(const Vector2D& poz, float an) {
         position.x = poz.x;
         position.y = poz.y;
 
         velocity.x = 0;
         velocity.y = 0;
-    }
 
-    TranformComponent(const Vector2D& poz, const Vector2D& vel) {
+        angle = an;
+    }
+    TranformComponent( Vector2D *poz, float an) {
+        position.x = poz->x;
+        position.y = poz->y;
+
+        velocity.x = 0;
+        velocity.y = 0;
+
+        angle = an;
+    }
+    TranformComponent(const Vector2D& poz, const Vector2D& vel, float an) {
         position.x = poz.x;
         position.y = poz.y;
 
         velocity.x = vel.x;
         velocity.y = vel.y;
+
+        angle = an;
     }
 
     float x() { return position.x; }
@@ -58,96 +76,142 @@ public:
         position.x = x;
         position.y = y;
 	}
+};
 
+
+struct PlayerComponent : public Component {
+
+    TranformComponent& transform;
+    float plAc = 3;
+
+    PlayerComponent(TranformComponent& _transform) : transform(_transform){
+
+
+    }
     void update(float mFT) override {
+        int mouseX, mouseY;
+
         if (Game::event.type == SDL_KEYDOWN) {
-           
-            switch (Game::event.key.keysym.sym){
-            case SDLK_ESCAPE:
-                entity->destroy();
-                break;
+
+            switch (Game::event.key.keysym.sym) {
+                 case SDLK_SPACE:
+                     transform.velocity.x = 0;
+                     transform.velocity.y = 0;
+
+                     transform.position.x = 500;
+                     transform.position.y = 500;
+
+                     break;
             default:
                 break;
             }
 
-            if (Game::event.key.keysym.sym == SDLK_UP ){
-                velocity.y -= 1;
+            if (Game::event.key.keysym.sym == SDLK_UP) {
+                transform.velocity.x += mFT* plAc * cos(-transform.angle);
+                transform.velocity.y += mFT * plAc * sin(-transform.angle);
+
             }
             else if (Game::event.key.keysym.sym == SDLK_DOWN) {
-                velocity.y += 1;
+                transform.velocity.x += mFT * plAc * cos(-transform.angle + M_PI);
+                transform.velocity.y += mFT * plAc * sin(-transform.angle + M_PI);
             }
-                     
-            if (Game::event.key.keysym.sym == SDLK_RIGHT) {
-                velocity.x += 1;
+
+            if (Game::event.key.keysym.sym == SDLK_LEFT) {
+                transform.velocity.x += mFT * plAc * cos(transform.angle + M_PI / 2);
+                transform.velocity.y += mFT * plAc * sin(transform.angle - M_PI / 2);
             }
-            else if (Game::event.key.keysym.sym == SDLK_LEFT) {
-                velocity.x -= 1;
-            }          
-       }
+            else if (Game::event.key.keysym.sym == SDLK_RIGHT ) {
+                transform.velocity.x += mFT * plAc * cos(transform.angle - M_PI / 2);
+                transform.velocity.y += mFT * plAc * sin(transform.angle + M_PI / 2);
+            }
+        }
+        
+        if(transform.velocity.x > 0)
+        transform.velocity.x -= 0.5f;
+        else
+        transform.velocity.x += 0.5f;
 
-        position.x += velocity.x * mFT/1000.0f;
-        position.y += velocity.y * mFT / 1000.0f;
+        if(transform.velocity.y > 0)
+        transform.velocity.y -= 0.5f;
+        else
+        transform.velocity.y += 0.5f ;
 
+
+        transform.position.x += transform.velocity.x * mFT / 1000.0f;
+        transform.position.y += transform.velocity.y * mFT / 1000.0f;
+
+        if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+             transform.angle = atan2  (-mouseY + transform.position.y, mouseX - transform.position.x);
+
+            /*
+             std::cout <<"  ----------------------   " << endl;
+             std::cout <<  - mouseY + transform.position.y <<"  "<< mouseX  -transform.position.x  << endl;
+             std::cout << mouseY << "  " << mouseX << endl;
+             std::cout << "Curent angle is:" << transform.angle * 180 / M_PI << endl;
+             */
+        }
     }
+
 };
 
-struct CounterComponent :public Component {
-public:
-    float counter;
-    void update(float mFT) override
-    {
-        counter += mFT;
-        std::cout << counter << std::endl;
-    }
-};
-
-
-struct KillComponent :public  Component {
-    CounterComponent& cCounter;
-
-    KillComponent(CounterComponent& mCounterComponent): cCounter(mCounterComponent)
-    {
-    }
-
-    void update(float mFT) override
-    {
-        if (cCounter.counter >= 5000) entity->destroy();
-    }
-};
 
 struct SimpleSprite :public Component {
-    TranformComponent& transform ;
+private:
+    TranformComponent& transform;
     SDL_Texture* objTexture;
     SDL_Rect srcRect, destRect;
-    SDL_Renderer* renderer;
+    int orizontalSize, verticalSize;
 
+public:
+    SimpleSprite(TranformComponent& _transform, const char* texturesheet, int x, int y ) :transform(_transform) {
 
-    SimpleSprite(TranformComponent& _transform,const char* texturesheet, int x, int y, SDL_Renderer* _renderer) :transform(_transform) {
-        
-        renderer = _renderer;
-        objTexture = TextureManager::LoadTexture(texturesheet, renderer);
+        objTexture = TextureManager::LoadTexture(texturesheet, Game::renderer);
 
-        srcRect.h = 500;
-        srcRect.w = 500;
+        //We store the size of the texture
+        orizontalSize = TextureManager::getsize(objTexture).x;
+        verticalSize = TextureManager::getsize(objTexture).y;
+
+        //We define the map as the entire image.
+        srcRect.h = orizontalSize;
+        srcRect.w = verticalSize;
         srcRect.x = 0;
         srcRect.y = 0;
 
-        destRect.h = 500;
-        destRect.w = 500;
-       
+        //We place it in the correct spot
+        destRect.h = 100;
+        destRect.w = 100;
+        destRect.x = x - destRect.h /2.0f;
+        destRect.y = y - destRect.w / 2.0f;
     }
 
     void update(float mFT) override {
-
-        destRect.x = transform.x();
-        destRect.y = transform.y();
+        //Draw the sprite at the position we desire
+         destRect.x = transform.x() - destRect.h / 2.0f ;
+         destRect.y = transform.y() - destRect.w / 2.0f;
     }
+
+    /*int SDL_RenderCopyEx(SDL_Renderer*          renderer,
+                     SDL_Texture*           texture,
+                     const SDL_Rect*        srcrect,
+                     const SDL_Rect*        dstrect,
+                     const double           angle,
+                     const SDL_Point*       center,
+                     const SDL_RendererFlip flip)
+*/
 
     void draw() override
     {
-        if (SDL_RenderCopy(renderer, objTexture, &srcRect, &destRect) != 0) {
+        if (SDL_RenderCopyEx(Game::renderer, 
+            objTexture,
+            &srcRect,
+            &destRect,
+            90 - (transform.angle * 180 / M_PI ),
+            NULL,
+            SDL_FLIP_NONE
+            ) != 0) {
             std::cout << SDL_GetError() << '\n';
         }
     }
 
 };
+
