@@ -6,13 +6,13 @@
 //this is the main class of the game
 class Game{
 private:
-
 	bool isRunning;
-	
 public:
+	//Game variables
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	EntityManager entityManager;
+	static SDL_Event event;
 
 	Game();
 	Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);

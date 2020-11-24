@@ -1,2 +1,4 @@
 ﻿  Game.cpp
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(142,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(143,33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe
