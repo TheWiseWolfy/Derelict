@@ -30,7 +30,9 @@ private:
 
     std::vector<std::unique_ptr<Component>> components;      //fiecare entitate incorporeaza un numar de componente
 public:
- 
+    Entity() {
+
+    }
 
     // Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
     void update(float mFT);

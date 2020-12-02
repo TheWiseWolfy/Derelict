@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include "EntityManager.h"
+#include "Vector2D.h"
 
 //this is the main class of the game
 class Game{
@@ -28,8 +29,28 @@ public:
 
 	//Auxiliary fuctions
 	void setInitialState();
-
-
 	inline bool running() { return isRunning; }
+};
+
+static class Level {
+public:
+	const float level_width = 10000;
+	const float level_heigh = 10000;
+
+
+	static Vector2D camera_size;
+
+	static Vector2D camera_position;
+
+	static Vector2D screenSpaceToGameSpace(Vector2D screenPosition) {
+		return screenPosition + camera_position;
+	}
+
+	static Vector2D screenSpaceToGameSpace(int x, int y) {
+		 Vector2D temp;
+		 temp.x = x - camera_position.x;
+		 temp.y = y - camera_position.y;
+		 return temp;
+	}
 };
 

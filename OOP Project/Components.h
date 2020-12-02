@@ -2,17 +2,21 @@
 
 #include <iostream>
 #include <math.h>
+#include <string>
 #include "Vector2D.h"
 #include "Game.h"
 
 using namespace std;
 
 struct TranformComponent : public Component{
+    //Position is game space
     Vector2D position;
     Vector2D velocity;
     float angle;
 
 public:
+
+    Vector2D forward;  //A vector that always points forward 
 
     TranformComponent() {
         position.x = 0;
@@ -69,6 +73,7 @@ public:
         angle = an;
     }
 
+
     float x() { return position.x; }
     float y() { return  position.y; }
 
@@ -76,44 +81,40 @@ public:
         position.x = x;
         position.y = y;
 	}
-};
 
+    void update(float mFT) override {
+
+
+        forward.x =  cos(angle + M_PI );
+        forward.y =  sin(angle + M_PI ) ;
+    }
+};
 
 struct PlayerComponent : public Component {
 
     TranformComponent& transform;
-    float plAc = 3;
+    float plAc = 1.3;
 
-    PlayerComponent(TranformComponent& _transform) : transform(_transform){
+    PlayerComponent(TranformComponent& _transform) : transform(_transform){}
 
-
-    }
     void update(float mFT) override {
         int mouseX, mouseY;
+
+        //cout << transform.forward * 100 << "\n";
 
         if (Game::event.type == SDL_KEYDOWN) {
 
             switch (Game::event.key.keysym.sym) {
-                 case SDLK_SPACE:
-                     transform.velocity.x = 0;
-                     transform.velocity.y = 0;
-
-                     transform.position.x = 500;
-                     transform.position.y = 500;
-
-                     break;
             default:
                 break;
             }
 
+            //To refine later;
             if (Game::event.key.keysym.sym == SDLK_UP) {
-                transform.velocity.x += mFT* plAc * cos(-transform.angle);
-                transform.velocity.y += mFT * plAc * sin(-transform.angle);
-
+                 transform.velocity += mFT * plAc *  transform.forward ;
             }
             else if (Game::event.key.keysym.sym == SDLK_DOWN) {
-                transform.velocity.x += mFT * plAc * cos(-transform.angle + M_PI);
-                transform.velocity.y += mFT * plAc * sin(-transform.angle + M_PI);
+                transform.velocity += mFT * -plAc * transform.forward;
             }
 
             if (Game::event.key.keysym.sym == SDLK_LEFT) {
@@ -125,7 +126,8 @@ struct PlayerComponent : public Component {
                 transform.velocity.y += mFT * plAc * sin(transform.angle + M_PI / 2);
             }
         }
-        
+
+        //To redo
         if(transform.velocity.x > 0)
         transform.velocity.x -= 0.5f;
         else
@@ -136,24 +138,42 @@ struct PlayerComponent : public Component {
         else
         transform.velocity.y += 0.5f ;
 
-
+        //We calculate the final velocity
         transform.position.x += transform.velocity.x * mFT / 1000.0f;
         transform.position.y += transform.velocity.y * mFT / 1000.0f;
 
+        //Control mouse
         if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-             transform.angle = atan2  (-mouseY + transform.position.y, mouseX - transform.position.x);
 
-            /*
+            Vector2D gameMouse = Level::screenSpaceToGameSpace(mouseX, mouseY);
+
+            transform.angle = atan2(transform.position.y - gameMouse.y, transform.position.x - gameMouse.x); 
+            /*             
              std::cout <<"  ----------------------   " << endl;
-             std::cout <<  - mouseY + transform.position.y <<"  "<< mouseX  -transform.position.x  << endl;
              std::cout << mouseY << "  " << mouseX << endl;
-             std::cout << "Curent angle is:" << transform.angle * 180 / M_PI << endl;
+             std::cout <<"Ship position: X: "<< transform.position.x << "Y: " << transform.position.y << " \n";
+             std::cout <<"Mouse game position: X: "<< gameMouse.x <<"Y: "<< gameMouse.y << endl;
+             std::cout << transform.position.x - gameMouse.x << "  " << transform.position.y - gameMouse.y << endl;
+             std::cout << "Curent angle is:" << transform.angle << "\n"; //* 180 / M_PI << endl;
              */
-        }
+        }   
+        Level::camera_position.x = -transform.position.x + Level::camera_size.x/2;
+        Level::camera_position.y = -transform.position.y + Level::camera_size.y/2;
+
     }
 
-};
 
+    void draw() override
+    {
+        //optional debug line
+        SDL_RenderDrawLine(Game::renderer,
+            transform.position.x + Level::camera_position.x,
+            transform.position.y + Level::camera_position.y,
+            transform.position.x+ 100 * transform.forward.x + Level::camera_position.x,
+            transform.position.y+ 100 * transform.forward.y + Level::camera_position.y
+        );
+    }
+};
 
 struct SimpleSprite :public Component {
 private:
@@ -163,7 +183,7 @@ private:
     int orizontalSize, verticalSize;
 
 public:
-    SimpleSprite(TranformComponent& _transform, const char* texturesheet, int x, int y ) :transform(_transform) {
+    SimpleSprite(TranformComponent& _transform, const char* texturesheet, int h, int w ) :transform(_transform) {
 
         objTexture = TextureManager::LoadTexture(texturesheet, Game::renderer);
 
@@ -178,37 +198,23 @@ public:
         srcRect.y = 0;
 
         //We place it in the correct spot
-        destRect.h = 100;
-        destRect.w = 100;
-        destRect.x = x - destRect.h /2.0f;
-        destRect.y = y - destRect.w / 2.0f;
+        destRect.h = h;
+        destRect.w = w;
+  
     }
 
     void update(float mFT) override {
         //Draw the sprite at the position we desire
-         destRect.x = transform.x() - destRect.h / 2.0f ;
-         destRect.y = transform.y() - destRect.w / 2.0f;
+
+         destRect.x = Level::camera_position.x + transform.x() - destRect.h / 2.0f ;
+         destRect.y = Level::camera_position.y + transform.y() - destRect.w / 2.0f;
     }
 
-    /*int SDL_RenderCopyEx(SDL_Renderer*          renderer,
-                     SDL_Texture*           texture,
-                     const SDL_Rect*        srcrect,
-                     const SDL_Rect*        dstrect,
-                     const double           angle,
-                     const SDL_Point*       center,
-                     const SDL_RendererFlip flip)
-*/
-
-    void draw() override
-    {
-        if (SDL_RenderCopyEx(Game::renderer, 
-            objTexture,
-            &srcRect,
-            &destRect,
-            90 - (transform.angle * 180 / M_PI ),
-            NULL,
-            SDL_FLIP_NONE
-            ) != 0) {
+    void draw() override{
+        //render in window space
+        if (SDL_RenderCopyEx(Game::renderer, objTexture,&srcRect,&destRect,( /**/(transform.angle * 180) / M_PI -90 ),
+            NULL,SDL_FLIP_NONE) != 0) 
+        {
             std::cout << SDL_GetError() << '\n';
         }
     }
