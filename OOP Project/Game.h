@@ -34,9 +34,8 @@ public:
 
 static class Level {
 public:
-	const float level_width = 10000;
-	const float level_heigh = 10000;
-
+	static float levelWidth;
+	static float levelHeigh;
 
 	static Vector2D camera_size;
 

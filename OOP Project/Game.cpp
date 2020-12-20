@@ -12,6 +12,11 @@ SDL_Event Game::event;
 Vector2D Level::camera_position;
 Vector2D Level::camera_size;
 
+//We set limits for how big the level is going to be;
+
+float Level::levelWidth = 10000;
+float Level::levelHeigh = 10000;
+
 Game::Game(){
 	 init("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
 }
@@ -34,22 +39,22 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	if (fullscreen) flags = SDL_WINDOW_FULLSCREEN;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
-		std::cout << "\n**Initialization Start**";
+		std::cout << "**Initialization Start**\n";
 
 		window = SDL_CreateWindow(title, xpos, ypos, width, heigh, flags);
 		if (window) {
-			std::cout << "\nWindows Created!";
+			std::cout << "Windows Created!\n";
 		}
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer) {
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			std::cout << "\nRenderer Created!";
+			std::cout << "Renderer Created!\n";
 		}
 		isRunning = true;
 	}
 	else {
 		isRunning = false;
-		std::cout << "\nInitialization Failed!";
+		std::cout << "Initialization Failed!\n";
 
 	}
 	
@@ -97,13 +102,18 @@ void Game::setInitialState(){
 
 	 //We create an entity and get a reference to it:
 	auto& background(entityManager.addEntity());
-	auto& background_tranfsorm(background.addComponent<TranformComponent>(new Vector2D(0, 0), 0)/**/ );
-	auto& background_sprite(background.addComponent<SimpleSprite>(background_tranfsorm, "assets/galaxy.jpg", 6000, 7000) /**/);
+	auto& background_tranfsorm(background.addComponent<TranformComponent>(new Vector2D(1000, 1000), 0)/**/ );
+	auto& background_sprite(background.addComponent<SimpleSprite>(background_tranfsorm, "assets/galaxy.jpg",3000, 5000,0) /**/);
 
+
+	//Set up the player	
     auto& local_player = entityManager.addEntity();
 	auto& player_tranfsorm(local_player.addComponent<TranformComponent>(new Vector2D(300.0f, 300.0f), M_PI/2)  /**/);
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
-	auto& sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100)  /**/);
+	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
+	auto& sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
+
+
 
 	//player = local_player;
 	//transform = player_tranfsorm;

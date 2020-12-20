@@ -16,7 +16,6 @@ public:
 	//Scalar multiplication
 	friend Vector2D operator*(const Vector2D& v, float scalar);
 	friend Vector2D operator*(float scalar, const Vector2D& v);
-
 	friend Vector2D operator+(const Vector2D& v1, const Vector2D& v2);
 
 

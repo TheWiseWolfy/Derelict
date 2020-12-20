@@ -34,6 +34,7 @@ public:
 
     }
 
+ 
     // Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
     void update(float mFT);
     void draw();
@@ -63,6 +64,7 @@ public:
         return *c;
 
     }
+
 };
 
 
