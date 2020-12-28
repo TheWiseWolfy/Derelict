@@ -84,6 +84,10 @@ void Game::handleEvents(){
 
 void Game::update(float frameTime) {
 
+
+
+
+	//We update individual 
 	entityManager.update(frameTime);
 
 }
@@ -93,12 +97,22 @@ void Game::render(){
 
 	entityManager.draw();
 
-
-
 	SDL_RenderPresent(renderer);
 }
 
 void Game::setInitialState(){
+
+	std::vector<std::pair<float, float>> vecModelAsteroid;
+
+
+	vecModelAsteroid = {
+	{-50.0f,-50.0f},
+	{50.0f,-50.0f},
+	{50.0f,50.0f},
+	{-50.0f,50.1f},
+	};
+
+
 
 	 //We create an entity and get a reference to it:
 	auto& background(entityManager.addEntity());
@@ -111,7 +125,15 @@ void Game::setInitialState(){
 	auto& player_tranfsorm(local_player.addComponent<TranformComponent>(new Vector2D(300.0f, 300.0f), M_PI/2)  /**/);
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
 	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
-	auto& sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
+	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
+	auto& player_colider(local_player.addComponent<Colider>(player_tranfsorm, vecModelAsteroid));
+
+
+	auto& asteroid = entityManager.addEntity();
+	auto& asteroid_tranfsorm(asteroid.addComponent<TranformComponent>(new Vector2D(500.0f, 500.0f), M_PI / 2)  /**/);
+	auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid.png", 100, 100, -90)  /**/);
+	auto& asteroid_colider(asteroid.addComponent<Colider>(asteroid_tranfsorm, vecModelAsteroid));
+
 
 
 

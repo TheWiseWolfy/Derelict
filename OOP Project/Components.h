@@ -6,11 +6,15 @@
 
 #include "Vector2D.h"
 #include "Game.h"
+#include "TextureManager.h"
+#include "Colider.h"
 
 //More co
 
 using namespace std;
 
+//O componenta fundamentala care pastreaza coordonatele unui obiect, velocity si calculeaza legatura dintre acestea 2. 
+//Aditional am creat niste vectori locali folositori cum ar fi forward.
 struct TranformComponent : public Component{
     //Position is game space
     Vector2D position;
@@ -124,6 +128,33 @@ public:
     }
 };
 
+//Aici pastrez un wireframe, pe care il folosesc sa calculez coliziunile, prin metoda SAT, undeva in EntityManager.
+//Obiectele care nu au un Colider, nu sunt include in calcul.
+struct Colider : public Component {
+private:
+    TranformComponent& transform;
+
+
+public:
+    std::vector<std::pair<float, float>> vecModel;
+
+    Colider(TranformComponent& _transform, vector<pair<float, float>> _vecModel) : transform(_transform) {
+
+        vecModel = _vecModel;
+    }
+
+    void update(float mFT) override {
+
+
+    }
+
+    void draw() override
+    {
+
+    }
+
+};
+
 struct PlayerComponent : public Component {
 
     TranformComponent& transform;
@@ -155,7 +186,6 @@ struct PlayerComponent : public Component {
             }
             else if (Game::event.key.keysym.sym == SDLK_RIGHT ) {
                 transform.velocity += mFT * -plAc * transform.left;
-
             }
         }
 
@@ -221,7 +251,7 @@ public:
 
         //We define the map as the entire image.
         srcRect.h = orizontalSize;
-        srcRect.w = verticalSize;
+        srcRect.w = verticalSize ;
         srcRect.x = 0;
         srcRect.y = 0;
 
@@ -247,12 +277,6 @@ public:
             std::cout << SDL_GetError() << '\n';
         }
     }
-
-};
-
-struct RocketLogic : public Component {
-
-
 };
 
 struct FirearmComponent : public Component {
@@ -260,7 +284,6 @@ struct FirearmComponent : public Component {
     TranformComponent& transform;
 
     FirearmComponent(TranformComponent& _transform) : transform(_transform) {}
-
 
     void fire() {
         auto& rocket(Game::entityManager.rezerveEntity() );
@@ -288,3 +311,4 @@ struct FirearmComponent : public Component {
 
     }
 };
+

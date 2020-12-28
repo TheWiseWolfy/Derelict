@@ -1,43 +1,33 @@
 ﻿  EntityManager.cpp
-  Game.cpp
 C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.h(54,2): warning C4091: 'static ': ignored on left of 'Level' when no variable is declared
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(119,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(120,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(122,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(123,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(130,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(143,1): warning C4065: switch statement contains 'default' but no 'case' labels
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(200,61): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(199,61): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(198,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(197,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(238,64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(239,64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(61,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(62,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(53,41): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(123,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(124,25): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(126,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(127,21): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(161,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(174,1): warning C4065: switch statement contains 'default' but no 'case' labels
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(230,61): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(229,61): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(228,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(227,34): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(268,64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(269,64): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(46,25): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(53,41): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(59,72): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(59,68): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(59,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(59,60): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(89,25): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\EntityManager.cpp(92,38): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(99,41): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
           with
           [
               _Ty=double
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(269): message : see reference to function template instantiation 'T &Entity::addComponent<TranformComponent,Vector2D&,Vector2D,double>(Vector2D &,Vector2D &&,double &&)' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(292): message : see reference to function template instantiation 'T &Entity::addComponent<TranformComponent,Vector2D&,Vector2D,double>(Vector2D &,Vector2D &&,double &&)' being compiled
           with
           [
               T=TranformComponent
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(53,41): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(105): message : see reference to function template instantiation 'T &Entity::addComponent<TranformComponent,Vector2D*,int>(Vector2D *&&,int &&)' being compiled
-          with
-          [
-              T=TranformComponent
-          ]
-  Main.cpp
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.h(54,2): warning C4091: 'static ': ignored on left of 'Level' when no variable is declared
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Main.cpp(17,28): warning C4244: '=': conversion from 'Uint32' to 'float', possible loss of data
-  Vector2D.cpp
-  Generating Code...
   OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe

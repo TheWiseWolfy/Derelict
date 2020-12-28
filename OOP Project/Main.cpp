@@ -20,7 +20,7 @@ int main(int argc, char* args[]) {
 		game.update(frameTime);
 		game.render();
 
-
+		
 		std::this_thread::sleep_for(std::chrono::milliseconds(16));  //creating a teoretical max FPS of 1000 for stability reasons, not very portable
 
 

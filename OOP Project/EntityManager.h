@@ -1,4 +1,4 @@
-
+#pragma once
 #include <iostream>
 #include <vector>
 #include "Entity.h"
@@ -21,9 +21,14 @@ public:
     void update(float mFT);
     void draw();
 
+    //Aici putem adauga entitati direct in vectorul parcurs regulat, dar asta nu poate fi facut decant intre parcurgerile regulate ale 
+    //vectorului
     Entity& addEntity();
 
+    //Aici putem "comanda" entitati, iar jocul le va stoca temporar si va astepta pana le poate muta in vectorul permanent.
     Entity& rezerveEntity();
 
+    //aici se intampla magia
+    void collisionCheck();
 };
 
