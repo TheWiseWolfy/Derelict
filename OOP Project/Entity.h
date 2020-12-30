@@ -97,57 +97,53 @@ public:
 
     //Pot vedea daca o componenta exista, wow
     template<typename T>
-    bool hasComponent() const {
+    inline bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
     }
-   
-    template <typename S, typename T>
-    bool hasComponentRelatedTo() const {
-        for (auto& c : components) {
-            if ( std::is_base_of<T, S>::value) {
-                return true;
-          }
-        }
-        return false;
-    }
-
 
     //compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
     //chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu
     template<typename T, typename... TArgs>
-    T& addComponent(TArgs&&... mArgs) {
-       
-        T* c = new T(std::forward<TArgs>(mArgs)...);   //cream o componenta noua, de tipul cu care a fost chemat template-ul, iau apoi ii dam argumentele primite
-
-        c->parentEntity = this;
-        //atasam "parintele componentei" ca intr-o lista inlantuita
-
-        // c( un pointer "gol" ) va fi de acum sub controlul unui containter de tip "unuqie_ptr" care respecta principile RAII
-        //cand entitatea este distrusa, components va fi terminat, si unuqie_ptr va elibera memoria corespunzator
-        std::unique_ptr<Component> uPtr(c);
-        components.emplace_back(std::move(uPtr)); //uPtr este mutata in loc
-
-        //imformatie suplimentara pentru manipulare
-        componentArray[getComponentTypeID<T>()] = c;
-        componentBitset[getComponentTypeID<T>()] = true;
-
-        //returnam referinta la componenta propiuzisa
-        return *c;
-    }
+    T& addComponent(TArgs&&... mArgs);
 
     template <typename T>
-    T& getComponent() const
-    {
-        //Entitatea trebuie sa existe
-        assert(hasComponent<T>());
-
-        //Ne uitam in array-ul auxiliar dupa ID, si gasim exact ce ne asteptam sa gasim
-        auto ptr(componentArray[getComponentTypeID<T>()]);
-
-        //Convertim implicit pointerul de tip component, in pointer la tipul T, si dereferientem.
-        return *( static_cast<T*>(ptr) /**/);
-    }
+    T& getComponent() const;
 
 };
 
+//compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
+//chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu
 
+template<typename T, typename ...TArgs>
+ T& Entity::addComponent(TArgs && ...mArgs) {
+
+    T* c = new T(std::forward<TArgs>(mArgs)...);   //cream o componenta noua, de tipul cu care a fost chemat template-ul, iau apoi ii dam argumentele primite
+
+    c->parentEntity = this;
+    //atasam "parintele componentei" ca intr-o lista inlantuita
+
+    // c( un pointer "gol" ) va fi de acum sub controlul unui containter de tip "unuqie_ptr" care respecta principile RAII
+    //cand entitatea este distrusa, components va fi terminat, si unuqie_ptr va elibera memoria corespunzator
+    std::unique_ptr<Component> uPtr(c);
+    components.emplace_back(std::move(uPtr)); //uPtr este mutata in loc
+
+                                              //imformatie suplimentara pentru manipulare
+    componentArray[getComponentTypeID<T>()] = c;
+    componentBitset[getComponentTypeID<T>()] = true;
+
+    //returnam referinta la componenta propiuzisa
+    return *c;
+}
+
+ template<typename T>
+  T& Entity::getComponent() const
+ {
+     //Entitatea trebuie sa existe
+     assert(hasComponent<T>());
+
+     //Ne uitam in array-ul auxiliar dupa ID, si gasim exact ce ne asteptam sa gasim
+     auto ptr(componentArray[getComponentTypeID<T>()]);
+
+     //Convertim implicit pointerul de tip component, in pointer la tipul T, si dereferientem.
+     return *(static_cast<T*>(ptr) /**/);
+ }

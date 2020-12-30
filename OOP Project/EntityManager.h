@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 
-using wireframe = std::vector<std::pair<float, float>>;
+using Wireframe = std::vector<std::pair<float, float>>;
 
 // If `Entity` is an aggregate of components, `Manager` is an aggregate
 // of entities. Implementation is straightforward, and resembles the
@@ -17,7 +17,6 @@ private:
 
     //this vector is used for standby entities that have to been introduced in the vector in between frames
     std::vector<std::unique_ptr<Entity>> reservedEntities;
-
 
 public:
     void update(float mFT);

@@ -7,8 +7,8 @@
 #include "Coliders.h"
 
 //Auxiliary fuctions 
-bool findCorectColider(Colider** col, const Entity& en);
-bool isIntersecting(const wireframe& a, const wireframe& b);
+bool findCorectCollider(Collider** col, const Entity& en);
+bool isIntersecting(const Wireframe& a, const Wireframe& b);
 
 
 void  EntityManager::update(float mFT)
@@ -32,34 +32,27 @@ void  EntityManager::update(float mFT)
         reservedEntities.erase(reservedEntities.begin() + i);
     }
        
-
-
     //Update every component of 
     for (auto& e : entities) {
-      //  std::cout <<"inside "<< e << "\n";
+        std::cout << e<<" ";
         e->update(mFT);
-       // std::cout << "Colider" << e->hasComponent<Colider>() << "\n";
     }
+    std::cout << "\n";
 
-    //Aici calculam coliziunea dintre obiecte.
     collisionCheck();
-
-    std::cout << '\n';
-
 }
 
 void EntityManager::draw(){
     for (auto& e : entities) {
         e->draw();
     }
-
     //This is just debuging
 
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
 
-        Colider* colider1 = nullptr;
+        Collider* colider1 = nullptr;
 
-        if (findCorectColider(&colider1, *entities[f1]) /**/) {
+        if (findCorectCollider(&colider1, *entities[f1]) /**/) {
 
             for (size_t f2 = 0; f2 < colider1->vecModel.size() ; f2++) {
                 float x1 = colider1->vecModelinWolrd[f2].first + Level::camera_position.x;
@@ -94,29 +87,26 @@ Entity& EntityManager::rezerveEntity(){
 //Aici calculez coliziuni prin metoda SAT, pentru fiecare pereche de obiecte cu colider din vector.
 void EntityManager::collisionCheck(){
 
-
-
     //Update every component of 
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
 
-        Colider* colider1 = nullptr;
+        Collider* colider1 = nullptr;
 
-       if (findCorectColider(&colider1, *entities[f1] ) ) {
+       if (findCorectCollider(&colider1, *entities[f1] ) ) {
             //Pentru fiecare entitate cu un colider, verifica toate relatile ramase
             for (size_t f2 = f1 + 1; f2 < entities.size(); f2++) {
 
-                Colider* colider2 = nullptr;
+                Collider* colider2 = nullptr;
 
-                if (findCorectColider(&colider2, *entities[f2])  /**/) {
+                if (findCorectCollider(&colider2, *entities[f2])  /**/) {
 
                     //Separating Axis Theorem Algoritm implementat de mine
 
                     if (isIntersecting(colider1->vecModelinWolrd, colider2->vecModelinWolrd)) {
-                        std::cout << "Colider";
+                       // std::cout << "Colider";
 
                         colider1->onColision(*(colider2->getParentEntity()));
                         colider2->onColision(*(colider1->getParentEntity()));
-
                     }
                 }
             }
@@ -124,20 +114,20 @@ void EntityManager::collisionCheck(){
     }
 }
     
-bool findCorectColider(Colider** col,const Entity& en) {
+bool findCorectCollider(Collider** col,const Entity& en) {
     
-    if (en.hasComponent<AsteroidColider>()  /**/) {
-        *col = &(en.getComponent<AsteroidColider>());
+    if (en.hasComponent<AsteroidCollider>()  /**/) {
+        *col = &(en.getComponent<AsteroidCollider>());
         return true;
     }
-    else if (en.hasComponent<Colider>()) {
-        *col = &(en.getComponent<Colider>());
-       return true;
+    else if (en.hasComponent<PlayerCollider>() /**/){
+        *col = &(en.getComponent<PlayerCollider>());
+        return true;
     }
     return false;
 }
 
-bool isIntersecting(const wireframe& a, const wireframe& b)
+bool isIntersecting(const Wireframe& a, const Wireframe& b)
 {
     // loop over the vertices(-> edges -> axis) of the first polygon
     for (auto i = 0u; i < a.size() + 0; ++i) {

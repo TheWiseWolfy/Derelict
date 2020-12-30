@@ -1,11 +1,14 @@
 #pragma once
 
+#include <chrono>
+#include <thread>
+
 #include "Game.h"
 #include "Vector2D.h"
 
 //O componenta fundamentala care pastreaza coordonatele unui obiect, velocity si calculeaza legatura dintre acestea 2. 
 //Aditional am creat niste vectori locali folositori cum ar fi forward.
-struct TranformComponent : public Component{
+struct Transform : public Component{
     //Position is game space
     Vector2D position;
     float angle;
@@ -16,34 +19,33 @@ public:
     Vector2D forward;  //A vector that always points forward 
     Vector2D left; 
 
-    TranformComponent();
-    TranformComponent(float x, float y, float an);
-    TranformComponent(float x, float y, float vx, float vy, float an);
-    TranformComponent(const Vector2D& poz, float an);
-    TranformComponent(const Vector2D& poz, const Vector2D& vel, float an);
+    Transform();
+    Transform(float x, float y, float an);
+    Transform(float x, float y, float vx, float vy, float an);
+    Transform(const Vector2D& poz, float an);
+    Transform(const Vector2D& poz, const Vector2D& vel, float an);
 
-    TranformComponent(Vector2D* poz, float an);
-    TranformComponent(Vector2D* poz, Vector2D* vel, float an);
+    Transform(Vector2D* poz, float an);
+    Transform(Vector2D* poz, Vector2D* vel, float an);
 
     inline float x() { return position.x; }
     inline float y() { return  position.y; }
 
     void setPos(float x, float y);
-
     void update(float mFT) override;
 };
 
-struct Colider : public Component {
+struct Collider : public Component {
 protected:
-    TranformComponent& transform;
+    Transform& transform;
 public:
 
-    virtual void onColision(Entity& objectHit);
+    virtual void onColision(Entity& objectHit) = 0;
 
     std::vector<std::pair<float, float>> vecModel;
     std::vector<std::pair<float, float>> vecModelinWolrd;
 
-    Colider(TranformComponent& _transform, wireframe _vecModel);
+    Collider(Transform& _transform, Wireframe _vecModel);
 
     void update(float mFT) override;
     void draw() override;
@@ -51,10 +53,9 @@ public:
 
 struct PlayerComponent : public Component {
 
-    TranformComponent& transform;
+    Transform& transform;
     float plAc = 1.3;
-
-    PlayerComponent(TranformComponent& _transform);
+    PlayerComponent(Transform& _transform);
 
     void update(float mFT) override;
 
@@ -64,15 +65,15 @@ struct PlayerComponent : public Component {
 
 struct SimpleSprite :public Component {
 private:
-    TranformComponent& transform;
+    Transform& transform;
     SDL_Texture* objTexture;
     SDL_Rect srcRect, destRect;
     int orizontalSize, verticalSize;
     int spriteRotation;
 
 public:
-    SimpleSprite(TranformComponent& _transform, const char* texturesheet, int h, int w, int rotation);
-
+    SimpleSprite(Transform& _transform, const char* texturesheet, int h, int w, int rotation);
+    ~SimpleSprite();
     void update(float mFT) override;
 
     void draw() override;
@@ -80,11 +81,23 @@ public:
 
 struct FirearmComponent : public Component {
 
-    TranformComponent& transform;
+    Transform& transform;
 
-    FirearmComponent(TranformComponent& _transform);
+    FirearmComponent(Transform& _transform);
 
     void fire();
+
+    void update(float mFT) override;
+
+    void draw() override;
+};
+
+struct SelfDistruct : public Component {
+
+    float counter = 0;
+
+    SelfDistruct();
+
 
     void update(float mFT) override;
 

@@ -1,14 +1,17 @@
-
-
 #include <iostream>
 #include <math.h>
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include "Components.h"
-//#include "EntityManager.h"
+#include "Coliders.h"
+#include "EntityManager.h"
 #include "TextureManager.h"
 
-TranformComponent::TranformComponent(){
+
+//TRANSFORM
+Transform::Transform(){
 
 position.x = 0;
 position.y = 0;
@@ -18,7 +21,7 @@ velocity.y = 0;
 
 angle = 0;
  }
-TranformComponent::TranformComponent(float x, float y, float an) {
+Transform::Transform(float x, float y, float an) {
     position.x = x;
     position.y = y;
 
@@ -27,7 +30,7 @@ TranformComponent::TranformComponent(float x, float y, float an) {
 
     angle = an;
 }
-TranformComponent::TranformComponent(float x, float y, float vx, float vy, float an) {
+Transform::Transform(float x, float y, float vx, float vy, float an) {
     position.x = x;
     position.y = y;
 
@@ -36,7 +39,7 @@ TranformComponent::TranformComponent(float x, float y, float vx, float vy, float
 
     angle = an;
 }
-TranformComponent::TranformComponent(const Vector2D& poz, float an) {
+Transform::Transform(const Vector2D& poz, float an) {
     position.x = poz.x;
     position.y = poz.y;
 
@@ -45,7 +48,7 @@ TranformComponent::TranformComponent(const Vector2D& poz, float an) {
 
     angle = an;
 }
-TranformComponent::TranformComponent(const Vector2D& poz, const Vector2D& vel, float an) {
+Transform::Transform(const Vector2D& poz, const Vector2D& vel, float an) {
     position.x = poz.x;
     position.y = poz.y;
 
@@ -54,7 +57,7 @@ TranformComponent::TranformComponent(const Vector2D& poz, const Vector2D& vel, f
 
     angle = an;
 }
-TranformComponent::TranformComponent(Vector2D* poz, float an) {
+Transform::Transform(Vector2D* poz, float an) {
      position.x = poz->x;
      position.y = poz->y;
 
@@ -63,7 +66,7 @@ TranformComponent::TranformComponent(Vector2D* poz, float an) {
 
      angle = an;
  }
-TranformComponent::TranformComponent(Vector2D* poz, Vector2D* vel, float an) {
+Transform::Transform(Vector2D* poz, Vector2D* vel, float an) {
     position.x = poz->x;
     position.y = poz->y;
 
@@ -71,13 +74,11 @@ TranformComponent::TranformComponent(Vector2D* poz, Vector2D* vel, float an) {
     velocity.y = vel->y;
     angle = an;
 }
-
-inline void TranformComponent::setPos(float x, float y) {
+inline void Transform::setPos(float x, float y) {
     position.x = x;
     position.y = y;
 }
-
-void TranformComponent::update(float mFT) {
+void Transform::update(float mFT) {
 
     //Update position based on velocity 
     position.x += velocity.x * mFT / 1000.0f;
@@ -104,19 +105,18 @@ void TranformComponent::update(float mFT) {
     left.x = cos(angle + M_PI / 2);
     left.y = sin(angle + M_PI / 2);
 }
-inline void Colider::onColision(Entity& objectHit) {
+inline void Collider::onColision(Entity& objectHit) {
     std::cout << "This should not run\n";
 }
 
 //COLIDER
-
-Colider::Colider(TranformComponent& _transform, wireframe _vecModel) : transform(_transform) {
+Collider::Collider(Transform& _transform, Wireframe _vecModel) : transform(_transform) {
 
     vecModel = _vecModel;
     vecModelinWolrd = _vecModel;
 
 }
-void Colider::update(float mFT) {
+void Collider::update(float mFT) {
 
     // Rotate
     for (int i = 0; i < vecModelinWolrd.size(); i++) {
@@ -130,13 +130,13 @@ void Colider::update(float mFT) {
     }
 
 }
-void Colider::draw()
+void Collider::draw()
 {
 
 }
 
 //PLAYER COMPONENT
-PlayerComponent::PlayerComponent(TranformComponent& _transform) : transform(_transform) {}
+PlayerComponent::PlayerComponent(Transform& _transform) : transform(_transform) {}
 void PlayerComponent::update(float mFT) {
     int mouseX, mouseY;
 
@@ -205,7 +205,7 @@ void PlayerComponent::draw()
 }
 
 //SIMPLE SPRITE
-SimpleSprite::SimpleSprite(TranformComponent& _transform, const char* texturesheet, int h, int w, int rotation) :transform(_transform) {
+SimpleSprite::SimpleSprite(Transform& _transform, const char* texturesheet, int h, int w, int rotation) :transform(_transform) {
 
     objTexture = TextureManager::LoadTexture(texturesheet, Game::renderer);
 
@@ -225,6 +225,10 @@ SimpleSprite::SimpleSprite(TranformComponent& _transform, const char* textureshe
 
     spriteRotation = rotation;
 }
+SimpleSprite::~SimpleSprite()
+{
+    SDL_DestroyTexture(objTexture);
+}
 void SimpleSprite::update(float mFT) {
     //Draw the sprite at the position we desire
 
@@ -241,20 +245,21 @@ void SimpleSprite::draw() {
 }
 
 //FIREARM COMPONENT
-FirearmComponent::FirearmComponent(TranformComponent& _transform) : transform(_transform) {}
+FirearmComponent::FirearmComponent(Transform& _transform) : transform(_transform) {}
 void FirearmComponent::fire() {
    auto& rocket(Game::entityManager.rezerveEntity());
 
-   wireframe vecModelShip = {
+   Wireframe vecModelShip = {
    {-25.0,0},
    {25.0f,-25.0f},
    {25.0f,25.0f}
    };
 
    Vector2D poz(transform.position.x, transform.position.y);
-    auto& rocket_transform(rocket.addComponent<TranformComponent>(poz, 1000 * transform.forward + transform.velocity, transform.angle )/**/);
-    auto& rochet_colider(rocket.addComponent<Colider>(rocket_transform, vecModelShip));
+    auto& rocket_transform(rocket.addComponent<Transform>(poz, 1000 * transform.forward + transform.velocity, transform.angle )/**/);
+    auto& rochet_colider(rocket.addComponent<PlayerCollider>(rocket_transform, vecModelShip));
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/ship2.png", 40, 40, -90) /**/);
+    auto& SelfDistruct(rocket.addComponent<SelfDistruct>());
 }
 void FirearmComponent::update(float mFT) {
     if (Game::event.type == SDL_KEYDOWN) {
@@ -271,4 +276,20 @@ void FirearmComponent::update(float mFT) {
 void FirearmComponent::draw()
 {
 
+}
+
+//SELF DISTRUCT COMPONENT
+
+SelfDistruct::SelfDistruct(){
+}
+void SelfDistruct::update(float mFT){
+
+    //creating a teoretical max FPS of 1000 for stability reasons, not very portable
+    counter += mFT;
+    //std::cout << counter << std::endl;
+    if (counter >= 1000) this->getParentEntity()->destroy();
+
+}
+void SelfDistruct::draw()
+{
 }
