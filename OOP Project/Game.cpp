@@ -1,10 +1,27 @@
-#include <iostream>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+#include <iostream>
 #include "Game.h"
 #include "TextureManager.h"
 #include "Components.h"
+#include "Vector2D.h"
+#include "Coliders.h"
 
+//Important handles
+SDL_Window* Game::window;
+SDL_Renderer* Game::renderer;
+EntityManager Game::entityManager;
 SDL_Event Game::event;
+Vector2D Level::camera_position;
+Vector2D Level::camera_size;
+
+//We set limits for how big the level is going to be;
+
+float Level::levelWidth = 10000;
+float Level::levelHeigh = 10000;
+
+//Some useful abtractions 
 
 Game::Game(){
 	 init("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
@@ -28,31 +45,32 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	if (fullscreen) flags = SDL_WINDOW_FULLSCREEN;
 
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
-		std::cout << "\n**Initialization Start**";
+		std::cout << "**Initialization Start**\n";
 
 		window = SDL_CreateWindow(title, xpos, ypos, width, heigh, flags);
 		if (window) {
-			std::cout << "\nWindows Created!";
+			std::cout << "Windows Created!\n";
 		}
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer) {
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-			std::cout << "\nRenderer Created!";
+			std::cout << "Renderer Created!\n";
 		}
-
 		isRunning = true;
 	}
 	else {
 		isRunning = false;
+		std::cout << "Initialization Failed!\n";
+
 	}
+	
+	Level::camera_size.x = width;
+	Level::camera_size.y = heigh;
 
 
-	// We create an entity and get a reference to it:
-	auto& entity(entityManager.addEntity());
-	Vector2D wa(60.0f, 60.0f);
-	auto& tranfsorm(entity.addComponent<TranformComponent>(wa));
+	//We prepare the actual game
+	setInitialState();
 
-	auto& sprite(entity.addComponent<SimpleSprite>(tranfsorm,"assets/index.png", 0, 0, renderer));
 }
 
 void Game::handleEvents(){
@@ -65,23 +83,77 @@ void Game::handleEvents(){
 		break;
 
 	default:
+	case SDLK_ESCAPE:
 		break;
 	}
 }
 
 void Game::update(float frameTime) {
 
+	//We update individual 
 	entityManager.update(frameTime);
-}
 
+}
 
 void Game::render(){
 	SDL_RenderClear(renderer);
-
 	entityManager.draw();
-
 	SDL_RenderPresent(renderer);
 }
 
+void Game::setInitialState(){
+
+	Wireframe vecModelAsteroid={
+	{-50.0f,-50.0f},
+	{50.0f,-50.0f},
+	{50.0f,50.0f},
+	{40.0f,70.0f},
+	{-50.0f,50.1f},
+	};
+	Wireframe vecModelShip = {
+	{-50.0,0},
+	{50.0f,-50.0f},
+	{50.0f,50.0f}
+	};
+
+	 //We create an entity and get a reference to it:
+	auto& background(entityManager.addEntity());
+	auto& background_tranfsorm(background.addComponent<Transform>(new Vector2D(1000, 1000), 0)/**/ );
+	auto& background_sprite(background.addComponent<SimpleSprite>(background_tranfsorm, "assets/galaxy.jpg",3000, 5000,0) /**/);
+
+	//Set up the player	
+    auto& local_player = entityManager.addEntity();
+	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(300.0f, 300.0f), M_PI/2)  /**/);
+	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
+	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
+	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
+	auto& player_colider(local_player.addComponent<PlayerCollider>(player_tranfsorm, vecModelShip));
+
+	auto& asteroid = entityManager.addEntity();
+	auto& asteroid_tranfsorm(asteroid.addComponent<Transform>(new Vector2D(500.0f, 500.0f), M_PI / 2)  /**/);
+	auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid_1.png", 100, 100, -90)  /**/);
+	auto& asteroid_colider(asteroid.addComponent<AsteroidCollider>(asteroid_tranfsorm, vecModelAsteroid));
+
+	auto& asteroid2 = entityManager.addEntity();
+	auto& asteroid_tranfsorm2(asteroid2.addComponent<Transform>(new Vector2D(500.0f, 300.0f), M_PI / 2)  /**/);
+	auto& asteroid_sprite2(asteroid2.addComponent<SimpleSprite>(asteroid_tranfsorm2, "assets/asteroid_1.png", 100, 100, -90)  /**/);
+	auto& asteroid_colider2(asteroid2.addComponent<AsteroidCollider>(asteroid_tranfsorm2, vecModelAsteroid));
+
+	auto& asteroid3 = entityManager.addEntity();
+	auto& asteroid_tranfsorm3(asteroid3.addComponent<Transform>(new Vector2D(500.0f,100.0f), M_PI / 2)  /**/);
+	auto& asteroid_sprite3(asteroid3.addComponent<SimpleSprite>(asteroid_tranfsorm3, "assets/asteroid_1.png", 100, 100, -90)  /**/);
+	auto& asteroid_colider3(asteroid3.addComponent<AsteroidCollider>(asteroid_tranfsorm3, vecModelAsteroid));
 
 
+}
+
+Vector2D Level::screenSpaceToGameSpace(Vector2D screenPosition) {
+	return screenPosition + camera_position;
+}
+
+Vector2D Level::screenSpaceToGameSpace(int x, int y) {
+	Vector2D temp;
+	temp.x = x - camera_position.x;
+	temp.y = y - camera_position.y;
+	return temp;
+}
