@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>
 #include <vector>
+
 #include "Entity.h"
 
 using wireframe = std::vector<std::pair<float, float>>;
@@ -32,6 +32,6 @@ public:
 
     //aici se intampla magia
     void collisionCheck();
+
 };
 
-bool isIntersecting(const wireframe& a, const wireframe& b);

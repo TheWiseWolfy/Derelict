@@ -1,3 +1,5 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
 
 #include <iostream>
@@ -5,13 +7,15 @@
 #include <array>
 #include <bitset>
 #include <cassert>
-#include <SDL.h>
+#include <typeinfo>
 
-//Header foarte complicat, as incerca sa il sparg in bucati dar sunt nesigur de ordinea exacta in care trebuie compilat, mai bine il las asa.
+#include <SDL.h>
 
 // Forward-declaration 
 class Entity;
 class Component;
+
+
 
 //Tip de data ID si nr maxim de componente suportate de engine
 using ComponentID = std::size_t; 
@@ -96,6 +100,17 @@ public:
     bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
     }
+   
+    template <typename S, typename T>
+    bool hasComponentRelatedTo() const {
+        for (auto& c : components) {
+            if ( std::is_base_of<T, S>::value) {
+                return true;
+          }
+        }
+        return false;
+    }
+
 
     //compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
     //chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu

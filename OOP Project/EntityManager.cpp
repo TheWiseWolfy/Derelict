@@ -1,6 +1,15 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 
 #include "EntityManager.h"
 #include "Components.h"
+#include "Coliders.h"
+
+//Auxiliary fuctions 
+bool findCorectColider(Colider** col, const Entity& en);
+bool isIntersecting(const wireframe& a, const wireframe& b);
+
 
 void  EntityManager::update(float mFT)
 {
@@ -40,26 +49,28 @@ void  EntityManager::update(float mFT)
 }
 
 void EntityManager::draw(){
-    for (auto& e : entities) e->draw();
+    for (auto& e : entities) {
+        e->draw();
+    }
 
     //This is just debuging
 
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
-        if (entities[f1]->hasComponent<Colider>()  /**/) {
 
+        Colider* colider1 = nullptr;
 
-                    auto colider1 = entities[f1]->getComponent<Colider>();
+        if (findCorectColider(&colider1, *entities[f1]) /**/) {
 
-                    for (size_t f2 = 0; f2 < colider1.vecModel.size() ; f2++) {
-                        float x1 =  colider1.vecModelinWolrd[f2].first + Level::camera_position.x;
-                        float y1 =  colider1.vecModelinWolrd[f2].second + Level::camera_position.y;
-                        float x2 =  colider1.vecModelinWolrd[(f2 + 1) % colider1.vecModelinWolrd.size()].first + Level::camera_position.x;
-                        float y2 =  colider1.vecModelinWolrd[(f2 + 1) % colider1.vecModelinWolrd.size()].second + Level::camera_position.y ;
+            for (size_t f2 = 0; f2 < colider1->vecModel.size() ; f2++) {
+                float x1 = colider1->vecModelinWolrd[f2].first + Level::camera_position.x;
+                float y1 = colider1->vecModelinWolrd[f2].second + Level::camera_position.y;
+                float x2 = colider1->vecModelinWolrd[(f2 + 1) % colider1->vecModelinWolrd.size()].first + Level::camera_position.x;
+                float y2 = colider1->vecModelinWolrd[(f2 + 1) % colider1->vecModelinWolrd.size()].second + Level::camera_position.y ;
                     
-                        SDL_RenderDrawLine(Game::renderer, (int)x1, (int)y1, (int)x2, (int)y2);
-                    }
-                }
+                SDL_RenderDrawLine(Game::renderer, (int)x1, (int)y1, (int)x2, (int)y2);
             }
+        }
+    }
 }
 
 Entity& EntityManager::addEntity(){
@@ -78,30 +89,52 @@ Entity& EntityManager::rezerveEntity(){
     return *e;
 }
 
+
+
 //Aici calculez coliziuni prin metoda SAT, pentru fiecare pereche de obiecte cu colider din vector.
 void EntityManager::collisionCheck(){
 
+
+
     //Update every component of 
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
-        if (entities[f1]->hasComponent<Colider>()  /**/ ) {
+
+        Colider* colider1 = nullptr;
+
+       if (findCorectColider(&colider1, *entities[f1] ) ) {
             //Pentru fiecare entitate cu un colider, verifica toate relatile ramase
             for (size_t f2 = f1 + 1; f2 < entities.size(); f2++) {
-                if (entities[f2]->hasComponent<Colider>()  /**/) {
 
-                    auto colider1 = entities[f1]->getComponent<Colider>();
-                    auto colider2 = entities[f2]->getComponent<Colider>();
+                Colider* colider2 = nullptr;
+
+                if (findCorectColider(&colider2, *entities[f2])  /**/) {
 
                     //Separating Axis Theorem Algoritm implementat de mine
 
-                    if (isIntersecting(colider1.vecModelinWolrd, colider2.vecModelinWolrd)) {
+                    if (isIntersecting(colider1->vecModelinWolrd, colider2->vecModelinWolrd)) {
                         std::cout << "Colider";
 
-                        colider1.fuct(colider2.getParentEntity());
+                        colider1->onColision(*(colider2->getParentEntity()));
+                        colider2->onColision(*(colider1->getParentEntity()));
+
                     }
                 }
             }
         }
     }
+}
+    
+bool findCorectColider(Colider** col,const Entity& en) {
+    
+    if (en.hasComponent<AsteroidColider>()  /**/) {
+        *col = &(en.getComponent<AsteroidColider>());
+        return true;
+    }
+    else if (en.hasComponent<Colider>()) {
+        *col = &(en.getComponent<Colider>());
+       return true;
+    }
+    return false;
 }
 
 bool isIntersecting(const wireframe& a, const wireframe& b)
@@ -116,7 +149,6 @@ bool isIntersecting(const wireframe& a, const wireframe& b)
         float xDif = next.first - current.first;
         float yDif = next.second - current.second;
 
-        std::pair<float, float> edge(xDif, yDif);
         std::pair<float, float> axis(-yDif, xDif);
 
         // loop over all vertices of both polygons and project them

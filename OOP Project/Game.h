@@ -12,8 +12,8 @@ public:
 	//Game variables
 	static SDL_Window* window;
 	static SDL_Renderer* renderer;
-	static EntityManager entityManager;
 	static SDL_Event event;
+	static EntityManager entityManager;
 
 	Game();
 	Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen);
@@ -41,15 +41,8 @@ public:
 
 	static Vector2D camera_position;
 
-	static Vector2D screenSpaceToGameSpace(Vector2D screenPosition) {
-		return screenPosition + camera_position;
-	}
+	static Vector2D screenSpaceToGameSpace(Vector2D screenPosition);
 
-	static Vector2D screenSpaceToGameSpace(int x, int y) {
-		 Vector2D temp;
-		 temp.x = x - camera_position.x;
-		 temp.y = y - camera_position.y;
-		 return temp;
-	}
+	static Vector2D screenSpaceToGameSpace(int x, int y);
 };
 

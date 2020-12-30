@@ -1,8 +1,12 @@
-#include <iostream>
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
+#include <iostream>
 #include "Game.h"
 #include "TextureManager.h"
 #include "Components.h"
+#include "Vector2D.h"
+#include "Coliders.h"
 
 //Important handles
 SDL_Window* Game::window;
@@ -104,11 +108,6 @@ void Game::render(){
 }
 
 
-void test(Entity* hit) {
-
-	hit->destroy();
-}
-
 void Game::setInitialState(){
 
 	wireframe vecModelAsteroid={
@@ -135,18 +134,28 @@ void Game::setInitialState(){
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
 	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
 	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
-	auto& player_colider(local_player.addComponent<Colider>(player_tranfsorm, vecModelShip, test));
+	auto& player_colider(local_player.addComponent<Colider>(player_tranfsorm, vecModelShip));
 
 	auto& asteroid = entityManager.addEntity();
 	auto& asteroid_tranfsorm(asteroid.addComponent<TranformComponent>(new Vector2D(500.0f, 500.0f), M_PI / 2)  /**/);
 	auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid_1.png", 100, 100, -90)  /**/);
-	auto& asteroid_colider(asteroid.addComponent<Colider>(asteroid_tranfsorm, vecModelAsteroid,nullptr));
+	auto& asteroid_colider(asteroid.addComponent<AsteroidColider>(asteroid_tranfsorm, vecModelAsteroid));
 
 	auto& asteroid2 = entityManager.addEntity();
 	auto& asteroid_tranfsorm2(asteroid2.addComponent<TranformComponent>(new Vector2D(500.0f, 300.0f), M_PI / 2)  /**/);
 	auto& asteroid_sprite2(asteroid2.addComponent<SimpleSprite>(asteroid_tranfsorm2, "assets/asteroid_1.png", 100, 100, -90)  /**/);
-	auto& asteroid_colider2(asteroid2.addComponent<Colider>(asteroid_tranfsorm2, vecModelAsteroid,nullptr));
+	auto& asteroid_colider2(asteroid2.addComponent<AsteroidColider>(asteroid_tranfsorm2, vecModelAsteroid));
 
 
 }
 
+Vector2D Level::screenSpaceToGameSpace(Vector2D screenPosition) {
+	return screenPosition + camera_position;
+}
+
+Vector2D Level::screenSpaceToGameSpace(int x, int y) {
+	Vector2D temp;
+	temp.x = x - camera_position.x;
+	temp.y = y - camera_position.y;
+	return temp;
+}
