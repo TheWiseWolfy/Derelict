@@ -28,8 +28,8 @@ int main(int argc, char* args[]) {
 
 
 		//Runtime debug info
-		std::cout << "FPS: "<<1000 / frameTime;
-		std::cout << "\r";
+		//std::cout << "FPS: "<<1000 / frameTime;
+		//std::cout << "\r";
 
 		//std::cout <<"Frames per second"<< 1000/frameTime<< "\n";
 	}

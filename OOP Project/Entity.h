@@ -42,12 +42,16 @@ class Component
 private:
 
 public:
-    Entity* entity = nullptr; 
+    Entity* parentEntity = nullptr; 
     
     virtual void update(float mFT) {}
     virtual void draw() {}
     
     virtual ~Component() {}
+
+    Entity* getParentEntity(){
+        return parentEntity;
+    }
 };
 
 // Un "profil" al fiecarei antitati, o metoda rapida de a stoca ce entitate are ce componenta.
@@ -75,7 +79,9 @@ private:
 
     ComponentBitset componentBitset;
 public:
-    Entity() {}
+    Entity() {
+        
+    }
 
     // Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
     void update(float mFT);
@@ -94,11 +100,11 @@ public:
     //compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
     //chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu
     template<typename T, typename... TArgs>
-    T& addComponent(TArgs&&... mArgs) { 
+    T& addComponent(TArgs&&... mArgs) {
        
         T* c = new T(std::forward<TArgs>(mArgs)...);   //cream o componenta noua, de tipul cu care a fost chemat template-ul, iau apoi ii dam argumentele primite
 
-        c->entity = this;
+        c->parentEntity = this;
         //atasam "parintele componentei" ca intr-o lista inlantuita
 
         // c( un pointer "gol" ) va fi de acum sub controlul unui containter de tip "unuqie_ptr" care respecta principile RAII

@@ -1,3 +1,4 @@
+
 #include "EntityManager.h"
 #include "Components.h"
 
@@ -26,7 +27,7 @@ void  EntityManager::update(float mFT)
 
     //Update every component of 
     for (auto& e : entities) {
-        std::cout <<"inside "<< e << "\n";
+      //  std::cout <<"inside "<< e << "\n";
         e->update(mFT);
        // std::cout << "Colider" << e->hasComponent<Colider>() << "\n";
     }
@@ -43,27 +44,22 @@ void EntityManager::draw(){
 
     //This is just debuging
 
-    for (int f1 = 0; f1 < entities.size(); f1++) {
+    for (size_t f1 = 0; f1 < entities.size(); f1++) {
         if (entities[f1]->hasComponent<Colider>()  /**/) {
 
-                    auto tranform1 = entities[f1]->getComponent<TranformComponent>();
 
                     auto colider1 = entities[f1]->getComponent<Colider>();
 
-                    for (int f2 = 0; f2 < colider1.vecModel.size() -1; f2++) {
-                        float x1 = tranform1.position.x + colider1.vecModel[f2].first + Level::camera_position.x;
-                        float y1 = tranform1.position.y + colider1.vecModel[f2].second + Level::camera_position.y;
-                        float x2 = tranform1.position.x + colider1.vecModel[f2+ 1].first + Level::camera_position.x;
-                        float y2 = tranform1.position.y + colider1.vecModel[f2 + 1].second + Level::camera_position.y ;
+                    for (size_t f2 = 0; f2 < colider1.vecModel.size() ; f2++) {
+                        float x1 =  colider1.vecModelinWolrd[f2].first + Level::camera_position.x;
+                        float y1 =  colider1.vecModelinWolrd[f2].second + Level::camera_position.y;
+                        float x2 =  colider1.vecModelinWolrd[(f2 + 1) % colider1.vecModelinWolrd.size()].first + Level::camera_position.x;
+                        float y2 =  colider1.vecModelinWolrd[(f2 + 1) % colider1.vecModelinWolrd.size()].second + Level::camera_position.y ;
                     
-                        SDL_RenderDrawLine(Game::renderer, x1, y1, x2, y2);
+                        SDL_RenderDrawLine(Game::renderer, (int)x1, (int)y1, (int)x2, (int)y2);
                     }
                 }
             }
-        
-    
-
-
 }
 
 Entity& EntityManager::addEntity(){
@@ -86,37 +82,71 @@ Entity& EntityManager::rezerveEntity(){
 void EntityManager::collisionCheck(){
 
     //Update every component of 
-    for (int f1 = 0; f1 < entities.size(); f1++) {
+    for (size_t f1 = 0; f1 < entities.size(); f1++) {
         if (entities[f1]->hasComponent<Colider>()  /**/ ) {
             //Pentru fiecare entitate cu un colider, verifica toate relatile ramase
-            for (int f2 = f1 + 1; f2 < entities.size(); f2++) {
+            for (size_t f2 = f1 + 1; f2 < entities.size(); f2++) {
                 if (entities[f2]->hasComponent<Colider>()  /**/) {
-
-                    auto tranform1 = entities[f1]->getComponent<TranformComponent>();
-                    auto tranform2 = entities[f2]->getComponent<TranformComponent>();
 
                     auto colider1 = entities[f1]->getComponent<Colider>();
                     auto colider2 = entities[f2]->getComponent<Colider>();
 
                     //Separating Axis Theorem Algoritm implementat de mine
 
-                    float x1 = tranform1.position.x + colider1.vecModel[f1].first;
-                    float y1 = tranform1.position.y + colider1.vecModel[f1].second;
+                    if (isIntersecting(colider1.vecModelinWolrd, colider2.vecModelinWolrd)) {
+                        std::cout << "Colider";
 
-                    float x2 = tranform1.position.x + colider1.vecModel[f1 + 1].first;
-                    float y2 = tranform1.position.y + colider1.vecModel[f1 + 1].second;
-
-
-                    //calculam panta axei pe care o studiem 
-
-                    float m = (y2 - y1) / (x1 - x2);
-
-                    //
-
+                        colider1.fuct(colider2.getParentEntity());
+                    }
                 }
             }
         }
     }
+}
 
+bool isIntersecting(const wireframe& a, const wireframe& b)
+{
+    // loop over the vertices(-> edges -> axis) of the first polygon
+    for (auto i = 0u; i < a.size() + 0; ++i) {
+        // calculate the normal vector of the current edge
+        // this is the axis will we check in this loop
+        auto current = a[i];
+        auto next = a[(i + 1) % a.size()];
 
+        float xDif = next.first - current.first;
+        float yDif = next.second - current.second;
+
+        std::pair<float, float> edge(xDif, yDif);
+        std::pair<float, float> axis(-yDif, xDif);
+
+        // loop over all vertices of both polygons and project them
+        // onto the axis. We are only interested in max/min projections
+        auto aMaxProj = -std::numeric_limits<float>::infinity();
+        auto aMinProj = std::numeric_limits<float>::infinity();
+        auto bMaxProj = -std::numeric_limits<float>::infinity();
+        auto bMinProj = std::numeric_limits<float>::infinity();
+
+        for (const auto& v : a) {
+            auto proj = v.first * axis.first + v.second * axis.second;
+            if (proj < aMinProj) aMinProj = proj;
+            if (proj > aMaxProj) aMaxProj = proj;
+        }
+
+        for (const auto& v : b) {
+            auto proj = v.first * axis.first + v.second * axis.second;
+            if (proj < bMinProj) bMinProj = proj;
+            if (proj > bMaxProj) bMaxProj = proj;
+        }
+
+        // now check if the intervals the both polygons projected on the
+        // axis overlap. If they don't, we have found an axis of separation and
+        // the given polygons cannot overlap
+        if (aMaxProj < bMinProj || aMinProj > bMaxProj) {
+            return false;
+        }
+    }
+
+    // at this point, we have checked all axis but found no separating axis
+    // which means that the polygons must intersect.
+    return true;
 }

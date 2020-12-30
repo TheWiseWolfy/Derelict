@@ -3,6 +3,8 @@
 #include <vector>
 #include "Entity.h"
 
+using wireframe = std::vector<std::pair<float, float>>;
+
 // If `Entity` is an aggregate of components, `Manager` is an aggregate
 // of entities. Implementation is straightforward, and resembles the
 // previous one.
@@ -32,3 +34,4 @@ public:
     void collisionCheck();
 };
 
+bool isIntersecting(const wireframe& a, const wireframe& b);

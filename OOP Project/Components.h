@@ -4,10 +4,10 @@
 #include <math.h>
 #include <string>
 
-#include "Vector2D.h"
 #include "Game.h"
+#include "Vector2D.h"
 #include "TextureManager.h"
-#include "Colider.h"
+
 
 //More co
 
@@ -104,7 +104,7 @@ public:
        position.x += velocity.x * mFT / 1000.0f;
        position.y += velocity.y * mFT / 1000.0f;
 
-
+       //cout << velocity.x <<" "<<velocity.y << " \n";
 
         //Look, so this is broken, think about how to do it properly
         if (position.x <= 0)
@@ -128,23 +128,46 @@ public:
     }
 };
 
+
+
 //Aici pastrez un wireframe, pe care il folosesc sa calculez coliziunile, prin metoda SAT, undeva in EntityManager.
 //Obiectele care nu au un Colider, nu sunt include in calcul.
 struct Colider : public Component {
-private:
+protected:
     TranformComponent& transform;
-
-
 public:
-    std::vector<std::pair<float, float>> vecModel;
+    //Aici vom crea logica custom pentru diferitele entitati
+    //Avem acess la entity, deci la toate componentele lui, si mai avem acess si la obiectul ce care ne-am lovit
+    //deci si la toate componentele lui
+    virtual void onColision(Entity& objectHit) {}
 
-    Colider(TranformComponent& _transform, vector<pair<float, float>> _vecModel) : transform(_transform) {
+    std::vector<std::pair<float, float>> vecModel;
+    std::vector<std::pair<float, float>> vecModelinWolrd;
+
+    void (*fuct)(Entity* ent);
+
+    Colider(TranformComponent& _transform,wireframe _vecModel, void _fuct(Entity* ent)  ) : transform(_transform) {
 
         vecModel = _vecModel;
+        vecModelinWolrd = _vecModel;
+
+        fuct = _fuct;
     }
 
     void update(float mFT) override {
 
+        // Rotate
+        for (int i = 0; i < vecModelinWolrd.size(); i++) {
+            vecModelinWolrd[i].first = vecModel[i].first * cos(transform.angle) - vecModel[i].second * sin(transform.angle);
+            vecModelinWolrd[i].second = vecModel[i].first * sin(transform.angle) + vecModel[i].second * cos(transform.angle);
+        }
+        //Translate
+        for (int i = 0; i < vecModel.size(); ++i) {
+            vecModelinWolrd[i].first = vecModelinWolrd[i].first + transform.position.x;
+            vecModelinWolrd[i].second = vecModelinWolrd[i].second + transform.position.y;
+        }
+
+      
 
     }
 
@@ -152,6 +175,7 @@ public:
     {
 
     }
+
 
 };
 
