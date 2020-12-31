@@ -12,7 +12,7 @@ float frameTime = 0;
 
 int main(int argc, char* args[]) {
 
-	Game game("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
+	Game game("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, false);
 
 	//Main game loop
 	while (game.running()) {
@@ -28,10 +28,9 @@ int main(int argc, char* args[]) {
 		frameTime = SDL_GetTicks() - frameStart;
 
 		//Runtime debug info
-		//std::cout << "FPS: "<<1000 / frameTime;
-		//std::cout << "\r";
+	//	std::cout << "FPS: "<<1000 / frameTime;
+	//	std::cout << "\r";
 
-		//std::cout <<"Frames per second"<< 1000/frameTime<< "\n";
 	}
 
 	return 0;

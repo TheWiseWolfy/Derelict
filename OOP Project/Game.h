@@ -29,6 +29,8 @@ public:
 
 	//Auxiliary fuctions
 	void setInitialState();
+	void asteroidGeneration();
+
 	inline bool running() { return isRunning; }
 };
 

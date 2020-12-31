@@ -34,7 +34,7 @@ void  EntityManager::update(float mFT)
        
     //Update every component of 
     for (auto& e : entities) {
-        std::cout << e<<" ";
+       // std::cout << e<<" ";
         e->update(mFT);
     }
     std::cout << "\n";
@@ -48,11 +48,12 @@ void EntityManager::draw(){
     }
     //This is just debuging
 
+    /*
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
 
         Collider* colider1 = nullptr;
 
-        if (findCorectCollider(&colider1, *entities[f1]) /**/) {
+        if (findCorectCollider(&colider1, *entities[f1]) ) {
 
             for (size_t f2 = 0; f2 < colider1->vecModel.size() ; f2++) {
                 float x1 = colider1->vecModelinWolrd[f2].first + Level::camera_position.x;
@@ -64,6 +65,7 @@ void EntityManager::draw(){
             }
         }
     }
+    */
 }
 
 Entity& EntityManager::addEntity(){
@@ -124,6 +126,20 @@ bool findCorectCollider(Collider** col,const Entity& en) {
         *col = &(en.getComponent<PlayerCollider>());
         return true;
     }
+    else if (en.hasComponent<StationCollider>() /**/) {
+        *col = &(en.getComponent<StationCollider>());
+        return true;
+    }
+    else if (en.hasComponent<ProjectileCollider>() /**/) {
+        *col = &(en.getComponent<ProjectileCollider>());
+        return true;
+    }
+    else if (en.hasComponent<Collider>() /**/) {
+        *col = &(en.getComponent<Collider>());
+        return true;
+    }
+
+  
     return false;
 }
 

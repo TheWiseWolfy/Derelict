@@ -26,11 +26,9 @@ float Level::levelHeigh = 10000;
 Game::Game(){
 	 init("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
 }
-
 Game::Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen){
 	init(title, xpos, ypos, width, heigh, fullscreen);
 }
-
 Game::~Game(){
 	SDL_DestroyWindow(window);
 	
@@ -87,73 +85,108 @@ void Game::handleEvents(){
 		break;
 	}
 }
-
 void Game::update(float frameTime) {
 
 	//We update individual 
 	entityManager.update(frameTime);
 
 }
-
 void Game::render(){
 	SDL_RenderClear(renderer);
 	entityManager.draw();
 	SDL_RenderPresent(renderer);
 }
-
 void Game::setInitialState(){
 
-	Wireframe vecModelAsteroid={
-	{-50.0f,-50.0f},
-	{50.0f,-50.0f},
-	{50.0f,50.0f},
-	{40.0f,70.0f},
-	{-50.0f,50.1f},
-	};
 	Wireframe vecModelShip = {
 	{-50.0,0},
 	{50.0f,-50.0f},
 	{50.0f,50.0f}
 	};
+	Wireframe vecModelStation = {
+	{-130.0,50},
+	{-130.0,-50},
 
-	 //We create an entity and get a reference to it:
+	{-50,-130.0},
+	{50,-130.0},
+
+	{130,-50.0},
+	{130,50.0},
+
+	{50.0,130},
+	{-50.0,130},
+	};
+
+
+	//BACKGROUND
 	auto& background(entityManager.addEntity());
-	auto& background_tranfsorm(background.addComponent<Transform>(new Vector2D(1000, 1000), 0)/**/ );
-	auto& background_sprite(background.addComponent<SimpleSprite>(background_tranfsorm, "assets/galaxy.jpg",3000, 5000,0) /**/);
+	auto& background_sprite(background.addComponent<StaticSprite>( "assets/galaxy3.png",0,0,720, 2057,0,0) /**/);
 
+	auto& background_station(entityManager.addEntity());
+	auto& background_station_sprite(background_station.addComponent<StaticSprite>("assets/station.png", 800, 600 ,60, 100,50, 0) /**/);
+
+	auto& background_ship(entityManager.addEntity());
+	auto& background_ship_sprite(background_ship.addComponent<StaticSprite>("assets/background_ship1.png", 600, 400, 76, 270, 30, 0) /**/);
+	
 	//Set up the player	
     auto& local_player = entityManager.addEntity();
-	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(300.0f, 300.0f), M_PI/2)  /**/);
+	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(5000,5000), M_PI/2,2.0f)  /**/);
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
 	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
-	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/index.png", 100, 100,-90)  /**/);
+	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/ship2.png", 100, 100,-90)  /**/);
 	auto& player_colider(local_player.addComponent<PlayerCollider>(player_tranfsorm, vecModelShip));
 
+	
+	//Local station
+	auto& station = entityManager.addEntity();
+	auto& station_tranfsorm(station.addComponent<Transform>(new Vector2D(5300.0f, 5200.0f), M_PI / 2,1000.0f)  /**/);
+	auto& station_sprite(station.addComponent<SimpleSprite>(station_tranfsorm, "assets/space_station.png", 300, 300, 0)  /**/);
+	auto& station_colider(station.addComponent<StationCollider>(station_tranfsorm, vecModelStation));
+
+	asteroidGeneration();
+
+}
+
+void  Game::asteroidGeneration() {
+
+	Wireframe vecModelAsteroid = {
+{-45.0,0},
+{-30.0,-40.0},
+
+{20.0f,-30.0f},
+{40.0f,30.0f},
+
+{20.0f,45.0f}
+
+	};
+
+
 	auto& asteroid = entityManager.addEntity();
-	auto& asteroid_tranfsorm(asteroid.addComponent<Transform>(new Vector2D(500.0f, 500.0f), M_PI / 2)  /**/);
+	auto& asteroid_tranfsorm(asteroid.addComponent<Transform>(new Vector2D(5700.0f, 5500.0f), M_PI / 3, 1.0f)  /**/);
 	auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid_1.png", 100, 100, -90)  /**/);
 	auto& asteroid_colider(asteroid.addComponent<AsteroidCollider>(asteroid_tranfsorm, vecModelAsteroid));
 
 	auto& asteroid2 = entityManager.addEntity();
-	auto& asteroid_tranfsorm2(asteroid2.addComponent<Transform>(new Vector2D(500.0f, 300.0f), M_PI / 2)  /**/);
+	auto& asteroid_tranfsorm2(asteroid2.addComponent<Transform>(new Vector2D(5700.0f, 5300.0f), M_PI / 4, 5.0f)  /**/);
 	auto& asteroid_sprite2(asteroid2.addComponent<SimpleSprite>(asteroid_tranfsorm2, "assets/asteroid_1.png", 100, 100, -90)  /**/);
 	auto& asteroid_colider2(asteroid2.addComponent<AsteroidCollider>(asteroid_tranfsorm2, vecModelAsteroid));
 
 	auto& asteroid3 = entityManager.addEntity();
-	auto& asteroid_tranfsorm3(asteroid3.addComponent<Transform>(new Vector2D(500.0f,100.0f), M_PI / 2)  /**/);
+	auto& asteroid_tranfsorm3(asteroid3.addComponent<Transform>(new Vector2D(5700.0f, 5100.0f), M_PI / 2, 5.0f)  /**/);
 	auto& asteroid_sprite3(asteroid3.addComponent<SimpleSprite>(asteroid_tranfsorm3, "assets/asteroid_1.png", 100, 100, -90)  /**/);
 	auto& asteroid_colider3(asteroid3.addComponent<AsteroidCollider>(asteroid_tranfsorm3, vecModelAsteroid));
 
-
 }
+
 
 Vector2D Level::screenSpaceToGameSpace(Vector2D screenPosition) {
 	return screenPosition + camera_position;
 }
-
 Vector2D Level::screenSpaceToGameSpace(int x, int y) {
 	Vector2D temp;
 	temp.x = x - camera_position.x;
 	temp.y = y - camera_position.y;
 	return temp;
 }
+
+

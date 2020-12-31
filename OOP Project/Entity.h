@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+
 #include <array>
 #include <bitset>
 #include <cassert>
@@ -14,8 +15,6 @@
 // Forward-declaration 
 class Entity;
 class Component;
-
-
 
 //Tip de data ID si nr maxim de componente suportate de engine
 using ComponentID = std::size_t; 
@@ -83,6 +82,7 @@ private:
 
     ComponentBitset componentBitset;
 public:
+
     Entity() {
         
     }
