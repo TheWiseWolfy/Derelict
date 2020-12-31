@@ -4,12 +4,10 @@
 
 #include <iostream>
 #include <vector>
-
 #include <array>
 #include <bitset>
 #include <cassert>
 #include <typeinfo>
-
 #include <SDL.h>
 
 // Forward-declaration 
@@ -124,7 +122,7 @@ template<typename T, typename ...TArgs>
 
     // c( un pointer "gol" ) va fi de acum sub controlul unui containter de tip "unuqie_ptr" care respecta principile RAII
     //cand entitatea este distrusa, components va fi terminat, si unuqie_ptr va elibera memoria corespunzator
-    std::unique_ptr<Component> uPtr(c);
+    std::unique_ptr<Component> uPtr(c); //-V824
     components.emplace_back(std::move(uPtr)); //uPtr este mutata in loc
 
                                               //imformatie suplimentara pentru manipulare

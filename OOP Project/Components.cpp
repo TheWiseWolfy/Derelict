@@ -4,9 +4,11 @@
 #include <chrono>
 #include <thread>
 
+#include "Game.h"
 #include "Components.h"
 #include "Coliders.h"
 #include "EntityManager.h"
+#include "LevelManager.h"
 #include "TextureManager.h"
 
 
@@ -134,16 +136,16 @@ void Transform::update(float mFT) {
     //cout << velocity.x <<" "<<velocity.y << " \n";
     //Look, so this is broken, think about how to do it properly
     if (position.x <= 0)
-        position.x = 0;
+        velocity.x +=100 ;
 
     if (position.x >= Level::levelWidth)
-        position.x = Level::levelWidth;
+        velocity.x -= 100;
 
     if (position.y <= 0)
-        position.y = 0;
+        velocity.y += 100;
 
     if (position.y >= Level::levelHeigh)
-        position.y = Level::levelHeigh;
+        velocity.y -= 100;
 
     //We create some useful vectors for orientation
     forward.x = cos(angle + M_PI);
@@ -172,8 +174,10 @@ void Collider::onColision(Entity& objectHit){
     Vector2D difference = transThis.position - transHit.position;
     Vector2D relativeVelocity = transHit.velocity + transThis.velocity;
 
-    Vector2D newVelocityThis = relativeVelocity.getMagnitude() * (1 / transThis.mass) * difference.normalizeVector();
-    transThis.setVel(newVelocityThis );
+    //std::cout << relativeVelocity.getMagnitude() << " ";
+    Vector2D newVelocityThis = std::max(relativeVelocity.getMagnitude(),50.0f) * (1 / transThis.mass) * difference.normalizeVector();
+   // Vector2D newVelocityThis = transThis.velocity + difference.normalizeVector() * ( 100 / transThis.mass);
+    transThis.setVel(newVelocityThis);
 }
 void Collider::update(float mFT) {
 
@@ -209,6 +213,7 @@ void PlayerComponent::update(float mFT) {
         //One idea for the controls, might redu later
         if (Game::event.key.keysym.sym == SDLK_UP) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.forward;
+
         }
         else if (Game::event.key.keysym.sym == SDLK_DOWN) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.forward;
@@ -261,15 +266,15 @@ void PlayerComponent::update(float mFT) {
         }
 
         */
-
-       // std::cout <<"  ----------------------   " << std::endl;
-       // std::cout << mouseY << "  " << mouseX << std::endl;
-        //std::cout << "Ship position: X: " << transform.position.x << "Y: " << transform.position.y << " \n";
-        //std::cout <<"Mouse game position: X: "<< gameMouse.x <<"Y: "<< gameMouse.y << endl;
-       // std::cout << transform.position.x - gameMouse.x << "  " << transform.position.y - gameMouse.y << endl;
-       // std::cout << "Curent angle is:" << transform.angle << "\n"; //* 180 / M_PI << endl;
-       // std::cout << "Curent desired angle is:" << derisedAngle << "\n"; //* 180 / M_PI << endl;
-
+       /*
+       std::cout <<"  ----------------------   " << std::endl;
+       std::cout << mouseY << "  " << mouseX << std::endl;
+       std::cout << "Ship position: X: " << transform.position.x << "Y: " << transform.position.y << " \n";
+       std::cout <<"Mouse game position: X: "<< gameMouse.x <<"Y: "<< gameMouse.y << endl;
+       std::cout << transform.position.x - gameMouse.x << "  " << transform.position.y - gameMouse.y << endl;
+       std::cout << "Curent angle is:" << transform.angle << "\n";  
+       std::cout << "Curent desired angle is:" << derisedAngle << "\n"; 
+        */
         
     }
     Level::camera_position.x = -transform.position.x + Level::camera_size.x / 2;

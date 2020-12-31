@@ -2,11 +2,14 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include <iostream>
+
 #include "Game.h"
 #include "TextureManager.h"
 #include "Components.h"
 #include "Vector2D.h"
 #include "Coliders.h"
+#include "LevelManager.h"
+
 
 //Important handles
 SDL_Window* Game::window;
@@ -100,8 +103,8 @@ void Game::setInitialState(){
 
 	Wireframe vecModelShip = {
 	{-50.0,0},
-	{50.0f,-50.0f},
-	{50.0f,50.0f}
+	{30.0f,-50.0f},
+	{30.0f,50.0f}
 	};
 	Wireframe vecModelStation = {
 	{-130.0,50},
@@ -130,7 +133,7 @@ void Game::setInitialState(){
 	
 	//Set up the player	
     auto& local_player = entityManager.addEntity();
-	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(5000,5000), M_PI/2,2.0f)  /**/);
+	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(5050,5050), M_PI/2,5.0f)  /**/);
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
 	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
 	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/ship2.png", 100, 100,-90)  /**/);
@@ -147,46 +150,98 @@ void Game::setInitialState(){
 
 }
 
+void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput);
+
 void  Game::asteroidGeneration() {
 
 	Wireframe vecModelAsteroid = {
-{-45.0,0},
-{-30.0,-40.0},
-
-{20.0f,-30.0f},
-{40.0f,30.0f},
-
-{20.0f,45.0f}
-
+	{-45.0,0},
+	{-30.0,-40.0},
+	{20.0f,-30.0f},
+	{40.0f,30.0f},
+	{20.0f,45.0f}
 	};
 
+	Wireframe updatedModelAsteroid = vecModelAsteroid;
 
-	auto& asteroid = entityManager.addEntity();
-	auto& asteroid_tranfsorm(asteroid.addComponent<Transform>(new Vector2D(5700.0f, 5500.0f), M_PI / 3, 1.0f)  /**/);
-	auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid_1.png", 100, 100, -90)  /**/);
-	auto& asteroid_colider(asteroid.addComponent<AsteroidCollider>(asteroid_tranfsorm, vecModelAsteroid));
+	float* fNoiseSeed2D = nullptr;
+	float* fPerlinNoise2D = nullptr;
 
-	auto& asteroid2 = entityManager.addEntity();
-	auto& asteroid_tranfsorm2(asteroid2.addComponent<Transform>(new Vector2D(5700.0f, 5300.0f), M_PI / 4, 5.0f)  /**/);
-	auto& asteroid_sprite2(asteroid2.addComponent<SimpleSprite>(asteroid_tranfsorm2, "assets/asteroid_1.png", 100, 100, -90)  /**/);
-	auto& asteroid_colider2(asteroid2.addComponent<AsteroidCollider>(asteroid_tranfsorm2, vecModelAsteroid));
+	int nOutput = 36;
 
-	auto& asteroid3 = entityManager.addEntity();
-	auto& asteroid_tranfsorm3(asteroid3.addComponent<Transform>(new Vector2D(5700.0f, 5100.0f), M_PI / 2, 5.0f)  /**/);
-	auto& asteroid_sprite3(asteroid3.addComponent<SimpleSprite>(asteroid_tranfsorm3, "assets/asteroid_1.png", 100, 100, -90)  /**/);
-	auto& asteroid_colider3(asteroid3.addComponent<AsteroidCollider>(asteroid_tranfsorm3, vecModelAsteroid));
+	fNoiseSeed2D = new float[nOutput * nOutput];
+	fPerlinNoise2D = new float[nOutput * nOutput];
+
+	for (int i = 0; i < nOutput * nOutput; i++){
+		fNoiseSeed2D[i] = (float)rand() / (float)RAND_MAX;
+	}
+
+	PerlinNoise2D(nOutput, nOutput, fNoiseSeed2D, 6, 0.5, fPerlinNoise2D);
+
+	int generationDensity = 36;
+
+	float sectorHeigh = Level::levelHeigh / generationDensity;
+	float sectorWidth = Level::levelWidth / generationDensity;
+	for (size_t i = 0; i < generationDensity; i++)
+	{
+		for (size_t j = 0; j < generationDensity; j++)
+		{
+			if (fPerlinNoise2D[i * nOutput + j] > 0.65f) {
+
+				auto& asteroid = entityManager.addEntity();
+
+				float randomRotation= (float)rand() / (float)RAND_MAX;
+				float randomPozition = (float)rand() / (float)RAND_MAX;
+				float randomScale = (float)rand() / (float)RAND_MAX;
+
+				for (int f1 = 0; f1 < vecModelAsteroid.size(); f1++) {
+					updatedModelAsteroid[f1].first = vecModelAsteroid[f1].first * randomScale  + vecModelAsteroid[f1].first;
+					updatedModelAsteroid[f1].second = vecModelAsteroid[f1].second * randomScale + vecModelAsteroid[f1].second;
+				}
+
+				auto& asteroid_tranfsorm(asteroid.addComponent<Transform>(new Vector2D(j * sectorHeigh + sectorHeigh * randomPozition,  i * sectorWidth + sectorWidth * randomPozition), M_PI * randomRotation, randomScale * 10.0f + 5.0f)  /**/);
+				auto& asteroid_sprite(asteroid.addComponent<SimpleSprite>(asteroid_tranfsorm, "assets/asteroid_1.png", randomScale * 100 + 100, randomScale*100 + 100, -90)  /**/);
+				auto& asteroid_colider(asteroid.addComponent<AsteroidCollider>(asteroid_tranfsorm, updatedModelAsteroid));
+			}
+		}
+		std::cout << " \n";
+	}
 
 }
 
 
-Vector2D Level::screenSpaceToGameSpace(Vector2D screenPosition) {
-	return screenPosition + camera_position;
-}
-Vector2D Level::screenSpaceToGameSpace(int x, int y) {
-	Vector2D temp;
-	temp.x = x - camera_position.x;
-	temp.y = y - camera_position.y;
-	return temp;
-}
+void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
+{
+	// Used 1D Perlin Noise
+	for (int x = 0; x < nWidth; x++)
+		for (int y = 0; y < nHeight; y++)
+		{
+			float fNoise = 0.0f;
+			float fScaleAcc = 0.0f;
+			float fScale = 1.0f;
 
+			for (int o = 0; o < nOctaves; o++)
+			{
+				int nPitch = nWidth >> o;
+				int nSampleX1 = (x / nPitch) * nPitch;
+				int nSampleY1 = (y / nPitch) * nPitch;
 
+				int nSampleX2 = (nSampleX1 + nPitch) % nWidth;
+				int nSampleY2 = (nSampleY1 + nPitch) % nWidth;
+
+				float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
+				float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
+
+				float fSampleT = (1.0f - fBlendX) * fSeed[nSampleY1 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY1 * nWidth + nSampleX2];
+				float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY2 * nWidth + nSampleX2];
+
+				fScaleAcc += fScale;
+				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
+				fScale = fScale / fBias;
+			}
+
+			// Scale to seed range
+			fOutput[y * nWidth + x] = fNoise / fScaleAcc;
+		}
+
+}

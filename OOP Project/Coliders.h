@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+
+#include "EntityManager.h"
 #include "Components.h"
 #include "Vector2D.h"
 

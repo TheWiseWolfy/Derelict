@@ -5,6 +5,8 @@
 #include "EntityManager.h"
 #include "Components.h"
 #include "Coliders.h"
+#include "LevelManager.h"
+#include "Game.h"
 
 //Auxiliary fuctions 
 bool findCorectCollider(Collider** col, const Entity& en);
@@ -37,7 +39,7 @@ void  EntityManager::update(float mFT)
        // std::cout << e<<" ";
         e->update(mFT);
     }
-    std::cout << "\n";
+   
 
     collisionCheck();
 }
@@ -66,6 +68,31 @@ void EntityManager::draw(){
         }
     }
     */
+    SDL_RenderDrawLine(Game::renderer, 
+        1+ Level::camera_position.x,
+        1 + Level::camera_position.y,
+        Level::levelWidth + Level::camera_position.x,
+       1+ Level::camera_position.y);
+
+    SDL_RenderDrawLine(Game::renderer,
+        1 + Level::camera_position.x,
+        1 + Level::camera_position.y,
+        1 + Level::camera_position.x,
+        Level::levelHeigh + Level::camera_position.y);
+
+    SDL_RenderDrawLine(Game::renderer,
+        1 + Level::camera_position.x,
+        Level::levelHeigh + Level::camera_position.y,
+        Level::levelWidth + Level::camera_position.x,
+        Level::levelHeigh + Level::camera_position.y);
+
+    SDL_RenderDrawLine(Game::renderer,
+        Level::levelWidth + Level::camera_position.x,
+        1 + Level::camera_position.y,
+        Level::levelWidth + Level::camera_position.x,
+        Level::levelHeigh + Level::camera_position.y);
+
+
 }
 
 Entity& EntityManager::addEntity(){

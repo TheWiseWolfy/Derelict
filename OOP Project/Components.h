@@ -3,7 +3,7 @@
 #include <chrono>
 #include <thread>
 
-#include "Game.h"
+#include "EntityManager.h"
 #include "Vector2D.h"
 
 //O componenta fundamentala care pastreaza coordonatele unui obiect, velocity si calculeaza legatura dintre acestea 2. 
