@@ -1,5 +1,14 @@
 #include "LevelManager.h"
 
+Vector2D Level::camera_position;
+Vector2D Level::camera_size;
+
+//We set limits for how big the level is going to be;
+
+float Level::levelWidth = 8000;
+float Level::levelHeigh = 8000;
+int Level::activeEnemies = 0;
+
 Vector2D Level::screenSpaceToGameSpace(Vector2D screenPosition) {
 	return screenPosition + camera_position;
 }

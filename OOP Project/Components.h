@@ -65,12 +65,16 @@ public:
 
 struct PlayerComponent : public Component {
 
-
     Transform& transform;
-
     float playerForce = 5;
-    float counter = 0;
+
+    float fireCounter = 0;
+    float regenCounter = 0;
+    float soundCounter = 0;
+
     float life = 8;
+    float maxLife = 8;
+
     PlayerComponent(Transform& _transform);
 
     void update(float mFT) override;
@@ -136,9 +140,7 @@ struct FirearmComponent : public Component {
     FirearmComponent(Transform& _transform);
 
     void fire();
-
     void update(float mFT) override;
-
     void draw() override;
 };
 
@@ -148,9 +150,7 @@ struct SelfDistruct : public Component {
 
     SelfDistruct();
 
-
     void update(float mFT) override;
-
     void draw() override;
 };
 

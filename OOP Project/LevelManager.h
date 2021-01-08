@@ -6,6 +6,7 @@ static class Level {
 public:
 	static float levelWidth;
 	static float levelHeigh;
+	static int activeEnemies;
 
 	static Vector2D camera_size;
 	static Vector2D camera_position;

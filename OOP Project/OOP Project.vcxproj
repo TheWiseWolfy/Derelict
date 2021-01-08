@@ -72,8 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\VS Libraries\SDL2\include;C:\VS Libraries\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\VS Libraries\SDL2_image-2.0.5\lib\x86;C:\VS Libraries\SDL2\lib\x86;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\VS Libraries\SDL2\include;C:\VS Libraries\SDL2_image-2.0.5\include;C:\VS Libraries\SDL2_mixer-2.0.4\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\VS Libraries\SDL2_ttf-2.0.15\lib\x86;C:\VS Libraries\SDL2\lib\x86;C:\VS Libraries\SDL2_image-2.0.5\lib\x86;C:\VS Libraries\SDL2_mixer-2.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -90,13 +90,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\VS Libraries\SDL2_image-2.0.5\include;C:\VS Libraries\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\VS Libraries\SDL2_ttf-2.0.15\include;C:\VS Libraries\SDL2\include;C:\VS Libraries\SDL2_image-2.0.5\include;C:\VS Libraries\SDL2_mixer-2.0.4\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\VS Libraries\SDL2_image-2.0.5\lib\x86;C:\VS Libraries\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2_image.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2_image.lib;SDL2main.lib;SDL2_mixer.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -144,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="Coliders.cpp" />
     <ClCompile Include="Components.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -156,6 +156,7 @@
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="Coliders.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityManager.h" />

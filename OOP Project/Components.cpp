@@ -9,8 +9,10 @@
 #include "Coliders.h"
 #include "EntityManager.h"
 #include "LevelManager.h"
+#include "AssetManager.h"
 #include "TextureManager.h"
-
+#include "SoundManager.h"
+#include "LevelManager.h"
 
 //TRANSFORM
 Transform::Transform(){
@@ -220,50 +222,59 @@ void PlayerComponent::update(float mFT) {
 
     assert(player->hasComponent<FirearmComponent>());
 
+    soundCounter += mFT;
+    regenCounter += mFT;
+    fireCounter += mFT;
 
     //Keyboard control
     if (Game::event.type == SDL_KEYDOWN) {
-        switch (Game::event.key.keysym.sym) {
-        default:
-            break;
-        }
 
         //One idea for the controls, might redu later
         if (Game::event.key.keysym.sym == SDLK_UP) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.forward;
 
+            if (soundCounter > 1000) {
+                SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
+                soundCounter = 0;
+            }
         }
         else if (Game::event.key.keysym.sym == SDLK_DOWN) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.forward;
+            
+            if (soundCounter > 1000) {
+                SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
+                soundCounter = 0;
+            }
         }
 
         if (Game::event.key.keysym.sym == SDLK_LEFT) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.left;
+            
+            if (soundCounter > 1000) {
+                SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
+                soundCounter = 0;
+            }
         }
         else if (Game::event.key.keysym.sym == SDLK_RIGHT) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.left;
+
+            if (soundCounter > 1000) {
+                SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
+                soundCounter = 0;
+            }
         }
     }
-    //Being able too shoot
 
     //Enemy will shoot at a certain rate
     FirearmComponent* firearm = &(player->getComponent<FirearmComponent>());
-    counter += mFT;
-
-    if (Game::event.type == SDL_KEYDOWN && Game::event.key.keysym.sym == SDLK_SPACE) {
-        if (counter >= 1000) {
-            firearm->fire();
-            counter = 0;
-        }
-   }
 
     //Control mouse
-    if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+    if(SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 
         Vector2D gameMouse = Level::screenSpaceToGameSpace(mouseX, mouseY);
         float derisedAngle = atan2(transform.position.y - gameMouse.y, transform.position.x - gameMouse.x);
-       transform.angle = derisedAngle;
-      
+         transform.angle = derisedAngle;
+  
        /*
        std::cout <<"  ----------------------   " << std::endl;
        std::cout << mouseY << "  " << mouseX << std::endl;
@@ -273,7 +284,10 @@ void PlayerComponent::update(float mFT) {
        std::cout << "Curent angle is:" << transform.angle << "\n";  
        std::cout << "Curent desired angle is:" << derisedAngle << "\n"; 
         */
-        
+       if (fireCounter >= 1000) {
+           firearm->fire();
+           fireCounter = 0;
+       }
     }
     
     //We update the camera
@@ -281,28 +295,28 @@ void PlayerComponent::update(float mFT) {
     Level::camera_position.y = -transform.position.y + Level::camera_size.y / 2;
 
     //If the player has no life, we destryo the player
-    //std::cout << life << "\n";
-    if (life <= 0) {
-       // player->destroy();
-    }
 
+    if (life < maxLife) {
+        if (regenCounter >= 5000) {
+            life++;
+            regenCounter = 0;
+        }
+    }
 }
-void PlayerComponent::draw()
-{
+void PlayerComponent::draw(){
     //optional debug line
-    SDL_RenderDrawLine(Game::renderer,
-        transform.position.x + Level::camera_position.x,
-        transform.position.y + Level::camera_position.y,
-        transform.position.x + 100 * transform.forward.x + Level::camera_position.x,
-        transform.position.y + 100 * transform.forward.y + Level::camera_position.y
-    );
+    //SDL_RenderDrawLine(Game::renderer,
+    //    transform.position.x + Level::camera_position.x,
+    //    transform.position.y + Level::camera_position.y,
+    //    transform.position.x + 100 * transform.forward.x + Level::camera_position.x,
+    //    transform.position.y + 100 * transform.forward.y + Level::camera_position.y
+    //);
 }
 void PlayerComponent::onHit() {
     life -= 1;
 }
 
 //ENEMY AI COMPONENT
-
 EnemyComponent::EnemyComponent(Entity& _player, Transform& _transform) : player(_player), transform(_transform)
 {
 }
@@ -345,6 +359,9 @@ void EnemyComponent::update(float mFT){
     }
 
     if (life <= 0) {
+      Level::activeEnemies -= 1;
+      Game::score++;
+      SoundManager::Instance()->PlaySound("assets/explosion.wav", 0);
       enemy->destroy();
     }
 }
@@ -358,11 +375,12 @@ void EnemyComponent::onHit(){
 //SIMPLE SPRITE
 SimpleSprite::SimpleSprite(Transform& _transform, const char* texturesheet, int h, int w, int rotation) :transform(_transform) {
 
-    objTexture = TextureManager::LoadTexture(texturesheet, Game::renderer);
-
+    objTexture = AssetManager::Instance()->GetTexture(texturesheet);
     //We store the size of the texture
-    orizontalSize = TextureManager::getsize(objTexture).x;
-    verticalSize = TextureManager::getsize(objTexture).y;
+    orizontalSize = 0;
+    verticalSize = 0;
+
+    SDL_QueryTexture(objTexture, NULL, NULL, &orizontalSize, &verticalSize);
 
     //We define the map as the entire image.
     srcRect.h = verticalSize;
@@ -377,7 +395,7 @@ SimpleSprite::SimpleSprite(Transform& _transform, const char* texturesheet, int 
     spriteRotation = rotation;
 }
 SimpleSprite::~SimpleSprite(){
-    SDL_DestroyTexture(objTexture);
+  //  SDL_DestroyTexture(objTexture);
 }
 void SimpleSprite::update(float mFT) {
     //Draw the sprite at the position we desire
@@ -390,17 +408,20 @@ void SimpleSprite::draw() {
     if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( /**/(transform.angle * 180) / M_PI + spriteRotation),
         NULL, SDL_FLIP_NONE) != 0)
     {
-        std::cout << SDL_GetError() << '\n';
+        std::cout << "Simple spirte draw error:"<< SDL_GetError()  << '\n';
     }
 }
 
 //STATIC SPRITE
 StaticSprite::StaticSprite( const char* texturesheet, int _x, int _y,int h, int w,float _scroll,int rotation) {
-    objTexture = TextureManager::LoadTexture(texturesheet, Game::renderer);
+    objTexture = AssetManager::Instance()->GetTexture(texturesheet);
 
     //We store the size of the texture
-    orizontalSize = TextureManager::getsize(objTexture).x;
-    verticalSize = TextureManager::getsize(objTexture).y;
+    orizontalSize = 0;
+    verticalSize = 0;
+
+    SDL_QueryTexture(objTexture, NULL, NULL, &orizontalSize, &verticalSize);
+
 
     //We define the map as the entire image.
     srcRect.h = verticalSize;
@@ -420,7 +441,6 @@ StaticSprite::StaticSprite( const char* texturesheet, int _x, int _y,int h, int 
     scroll = _scroll;
 }
 StaticSprite::~StaticSprite(){
-    SDL_DestroyTexture(objTexture);
 }
 void StaticSprite::update(float mFT){
  
@@ -438,9 +458,9 @@ void StaticSprite::draw(){
         std::cout << SDL_GetError() << '\n';
     }
 
+
    
 }
-
 
 //FIREARM COMPONENT
 FirearmComponent::FirearmComponent(Transform& _transform) : transform(_transform) {}
@@ -458,6 +478,8 @@ void FirearmComponent::fire() {
     auto& rochet_colider(rocket.addComponent<ProjectileCollider>(rocket_transform, vecModelShip));
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/bullet.png", 40, 40, 180) /**/);
     auto& SelfDistruct(rocket.addComponent<SelfDistruct>());
+
+    SoundManager::Instance()->PlaySound("assets/laser.wav", 0);
 }
 void FirearmComponent::update(float mFT) {
 
@@ -471,10 +493,7 @@ void FirearmComponent::draw()
 SelfDistruct::SelfDistruct(){
 }
 void SelfDistruct::update(float mFT){
-
-    //creating a teoretical max FPS of 1000 for stability reasons, not very portable
     counter += mFT;
-    //std::cout << counter << std::endl;
     if (counter >= 1000) this->getParentEntity()->destroy();
 
 }

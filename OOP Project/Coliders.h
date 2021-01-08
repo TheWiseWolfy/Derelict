@@ -4,6 +4,7 @@
 #include "EntityManager.h"
 #include "Components.h"
 #include "Vector2D.h"
+#include "SoundManager.h"
 
 struct AsteroidCollider : Collider{
 
@@ -36,32 +37,6 @@ struct EnemyCollider : Collider {
 	}
 };
 
-
-struct ProjectileCollider : Collider {
-
-	ProjectileCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
-
-	void onColision(Entity& objectHit)override {
-		if (objectHit.hasComponent<ProjectileCollider>()) {
-			Collider::onColision(objectHit);
-
-			this->getParentEntity()->destroy();
-		}
-		else if (objectHit.hasComponent<AsteroidCollider>()) {
-			this->getParentEntity()->destroy();
-			objectHit.destroy();
-		}
-		 else if (objectHit.hasComponent<EnemyCollider>()) {
-			this->getParentEntity()->destroy();
-			objectHit.getComponent<EnemyComponent>().onHit();
-		}
-		 else if (objectHit.hasComponent<PlayerCollider>()) {
-			this->getParentEntity()->destroy();
-			objectHit.getComponent<PlayerComponent>().onHit();
-		}
-	}
-};
-
 struct StationCollider : Collider {
 
 	StationCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
@@ -73,5 +48,34 @@ struct StationCollider : Collider {
 		Collider::onColision(objectHit);
 		transThis.setVel(0, 0);
 
+	}
+};
+
+struct ProjectileCollider : Collider {
+
+	ProjectileCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
+
+	void onColision(Entity& objectHit)override {
+		if (objectHit.hasComponent<ProjectileCollider>()) {
+			//Collider::onColision(objectHit);
+
+			//this->getParentEntity()->destroy();
+		}
+		else if (objectHit.hasComponent<AsteroidCollider>()) {
+			SoundManager::Instance()->PlaySound("assets/explosion.wav", 0);
+			this->getParentEntity()->destroy();
+			objectHit.destroy();
+		}
+		else if (objectHit.hasComponent<EnemyCollider>()) {
+			this->getParentEntity()->destroy();
+			objectHit.getComponent<EnemyComponent>().onHit();
+		}
+		else if (objectHit.hasComponent<PlayerCollider>()) {
+			this->getParentEntity()->destroy();
+			objectHit.getComponent<PlayerComponent>().onHit();
+		}
+		else if (objectHit.hasComponent<StationCollider>()) {
+			this->getParentEntity()->destroy();
+		}
 	}
 };

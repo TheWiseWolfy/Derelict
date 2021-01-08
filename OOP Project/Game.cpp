@@ -2,6 +2,8 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include <iostream>
+#include <string>
+#include <SDL_ttf.h>
 
 #include "Game.h"
 #include "TextureManager.h"
@@ -10,21 +12,12 @@
 #include "Coliders.h"
 #include "LevelManager.h"
 
-
 //Important handles
 SDL_Window* Game::window;
 SDL_Renderer* Game::renderer;
 EntityManager Game::entityManager;
 SDL_Event Game::event;
-Vector2D Level::camera_position;
-Vector2D Level::camera_size;
-
-//We set limits for how big the level is going to be;
-
-float Level::levelWidth = 10000;
-float Level::levelHeigh = 10000;
-
-//Some useful abtractions 
+int Game::score = 0;
 
 Game::Game(){
 	 init("Derelict", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
@@ -37,6 +30,9 @@ Game::~Game(){
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
+
+	assetManager->Relase();
+	soundManager->Release();
 
 	std::cout << "\nGame Cleanned Succesfully" << '\n';
 }
@@ -63,23 +59,41 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	else {
 		isRunning = false;
 		std::cout << "Initialization Failed!\n";
-
+	}
+	if (TTF_Init() < 0) {
+		std::cout << "STD_TTF failed to initialize";
 	}
 
 	//Aici setam marimea camerei ca fiind marimea ferestrei pe care o folosim
 	Level::camera_size.x = width;
 	Level::camera_size.y = heigh;
 
+	//We define important things
+	assetManager = AssetManager::Instance();
+	if (assetManager == nullptr) {
+		return;
+	}
 
+	soundManager = SoundManager::Instance();
+	if (soundManager == nullptr) {
+		return;
+	}
 	//Aici setam parametri jocului, cream toate obiectele
 	setInitialState();
 
 }
-
+void Game::reset() {
+	stage = 1;
+	score = 0;
+	entityManager.clear();
+	Level::activeEnemies = 1;
+	lost = false;
+	player = nullptr;
+	setInitialState();
+}
 void Game::handleEvents(){
 
 	SDL_PollEvent(&event);
-
 	switch (event.type) {
 	case SDL_QUIT:
 		isRunning = false;
@@ -92,16 +106,56 @@ void Game::handleEvents(){
 }
 void Game::update(float frameTime) {
 
-	//We update individual 
-	entityManager.update(frameTime);
+	//Daca nu am pierdut jocul
+	if (!lost) {
+		//Actualizam fiecare entitate
+		entityManager.update(frameTime);
 
+		//Daca nu mai sunt inamici, crean mai multi inamici
+		if (Level::activeEnemies == 0) {
+			stage++;
+			enemySpawn(stage, player);
+			Level::activeEnemies = stage;
+		}
+		if (stage == 5) {
+			//You won
+		}
+		if (player->getComponent<PlayerComponent>().life <= 0) {
+			lost = true;
+		}
+	}
+	else if (lost) {
+		if (Game::event.type == SDL_KEYDOWN) {
+			switch (Game::event.key.keysym.sym) {
+			case (SDLK_r):
+				reset();
+				break;
+			case (SDLK_x):
+				isRunning = false;
+				break;
+			default:
+				break;
+			}
+		}
+	}
 }
+
 void Game::render(){
 	SDL_RenderClear(renderer);
-	entityManager.draw();
+
+	if (!lost) {
+		entityManager.draw();
+		drawHUD();
+	}
+	else if (lost) {
+		youLostMessage();
+	}
+
 	SDL_RenderPresent(renderer);
 }
 void Game::setInitialState(){
+
+	soundManager->PlayMusic("assets/music1.wav",0);
 
 	Wireframe vecModelShip = {
 	{-50.0,0},
@@ -122,7 +176,6 @@ void Game::setInitialState(){
 	{-50.0,130},
 	};
 
-
 	//BACKGROUND
 	auto& background(entityManager.addEntity());
 	auto& background_sprite(background.addComponent<StaticSprite>( "assets/galaxy3.png",0,0,720, 2057,0,0) /**/);
@@ -135,13 +188,13 @@ void Game::setInitialState(){
 	
 	//Set up the player	
     auto& local_player = entityManager.addEntity();
+	player = &local_player;
 	auto& player_tranfsorm(local_player.addComponent<Transform>(new Vector2D(5050,5050), M_PI/2,5.0f)  /**/);
 	auto& controler(local_player.addComponent<PlayerComponent>(player_tranfsorm)  /**/  );
 	auto& firearm(local_player.addComponent<FirearmComponent>(player_tranfsorm)  /**/);
 	auto& player_sprite(local_player.addComponent<SimpleSprite>(player_tranfsorm, "assets/ship2.png", 100, 100,-90)  /**/);
 	auto& player_colider(local_player.addComponent<PlayerCollider>(player_tranfsorm, vecModelShip));
 
-	
 	//Local station
 	auto& station = entityManager.addEntity();
 	auto& station_tranfsorm(station.addComponent<Transform>(new Vector2D(5300.0f, 5200.0f), M_PI / 2,1000.0f)  /**/);
@@ -149,18 +202,115 @@ void Game::setInitialState(){
 	auto& station_colider(station.addComponent<StationCollider>(station_tranfsorm, vecModelStation));
 
 	asteroidGeneration();
-
 	//Generate first enemy
 
-	auto& enemy = entityManager.addEntity();
-	auto& enemy_tranfsorm(enemy.addComponent<Transform>(new Vector2D(5200, 4800), M_PI / 2, 7.0f)  /**/);
-	auto& enemy_firearm(enemy.addComponent<FirearmComponent>(enemy_tranfsorm)  /**/);
-	auto& enemy_sprite(enemy.addComponent<SimpleSprite>(enemy_tranfsorm, "assets/enemy_ship.png", 100, 100, -90)  /**/);
-	auto& enemy_colider(enemy.addComponent<EnemyCollider>(enemy_tranfsorm, vecModelShip));
-	auto& enemy_AI(enemy.addComponent<EnemyComponent>(local_player,enemy_tranfsorm));
+	enemySpawn(1, &local_player);
+	Level::activeEnemies = 1;
+}
+void Game::drawHUD(){
+
+	//Draw life bar
+
+	int life = player->getComponent<PlayerComponent>().life;
+
+	SDL_Texture* objTexture = AssetManager::Instance()->GetTexture("assets/health_bar.png");
+	SDL_Rect srcRect, destRect;
+
+	int orizontalSize = 0;
+	int verticalSize = 0;
+
+	SDL_QueryTexture(objTexture, NULL, NULL, &orizontalSize, &verticalSize);
+
+	//We define the map as the entire image.
+	srcRect.h = verticalSize;
+	srcRect.w = orizontalSize;
+	srcRect.x = 0;
+	srcRect.y = 0;
+
+	//We place it in the correct spot
+	destRect.h = verticalSize * 4;
+	destRect.w = orizontalSize * 4;
+	destRect.x = 50;
+	destRect.y = 600;
+
+	for (int i = 0 ; i < life ; ++i){
+
+		destRect.x = i * 30 + 50;
+
+		if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, 0,
+			NULL, SDL_FLIP_NONE) != 0)
+		{
+			std::cout << SDL_GetError() << '\n';
+		}
+	}
+	
+	//Writing text on screen
+	std::string toDisplay = "Score: ";
+	toDisplay += std::to_string(score);
+
+	TTF_Font* Font = TTF_OpenFont("Sans.ttf", 33); //this opens a font style and sets a size
+	if (Font == nullptr) {
+		std::cout << TTF_GetError();
+	}
+
+	SDL_Color Color = { 255, 255, 255 }; 
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, toDisplay.c_str(), Color); 
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); 
+
+	orizontalSize = 0;
+	verticalSize = 0;
+
+	SDL_QueryTexture(Message, NULL, NULL, &orizontalSize, &verticalSize);
+
+	SDL_Rect Message_rect;
+	Message_rect.x = 0;  
+	Message_rect.y = 0; 
+	Message_rect.w = orizontalSize; 
+	Message_rect.h = verticalSize; 
+
+	TTF_CloseFont(Font);
+	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); 
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(Message);
+	
 }
 
-void  Game::asteroidGeneration() {
+void Game::youLostMessage(){
+	//Writing text on screen
+	std::string toDisplay = "You lost (R to starg again)";
+
+	TTF_Font* Font = TTF_OpenFont("Sans.ttf", 77); //this opens a font style and sets a size
+	if (Font == nullptr) {
+		std::cout << TTF_GetError();
+	}
+
+	SDL_Color Color = { 0, 0, 0 };
+	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, toDisplay.c_str(), Color);
+	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+	int orizontalSize = 0;
+	int verticalSize = 0;
+
+	SDL_QueryTexture(Message, NULL, NULL, &orizontalSize, &verticalSize);
+
+	SDL_Rect Message_rect;
+	Message_rect.x = 640 - orizontalSize / 2;
+	Message_rect.y = 400 - verticalSize / 2;
+	Message_rect.w = orizontalSize;
+	Message_rect.h = verticalSize;
+
+
+
+	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+
+	TTF_CloseFont(Font);
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(Message);
+	SDL_DestroyTexture(Message);
+
+
+}
+void Game::asteroidGeneration() {
 
 	Wireframe vecModelAsteroid = {
 	{-45.0,0},
@@ -194,7 +344,7 @@ void  Game::asteroidGeneration() {
 	{
 		for (size_t j = 0; j < generationDensity; j++)
 		{
-			if (fPerlinNoise2D[i * nOutput + j] > 0.65f) {
+			if (fPerlinNoise2D[i * nOutput + j] > 0.67f) {
 
 				auto& asteroid = entityManager.addEntity();
 
@@ -212,9 +362,25 @@ void  Game::asteroidGeneration() {
 				auto& asteroid_colider(asteroid.addComponent<AsteroidCollider>(asteroid_tranfsorm, updatedModelAsteroid));
 			}
 		}
-		std::cout << " \n";
 	}
-
 }
+void Game::enemySpawn(int n,Entity* target){
+
+	Wireframe vecModelEnemy = {
+	{-50.0,0},
+	{30.0f,-50.0f},
+	{30.0f,50.0f}
+	};
+
+	for(int i = 0; i < n ; i++){
+		auto& enemy = entityManager.addEntity();
+		auto& enemy_tranfsorm(enemy.addComponent<Transform>(new Vector2D(5200 + 200 * i, 4800), M_PI / 2, 7.0f)  /**/);
+		auto& enemy_firearm(enemy.addComponent<FirearmComponent>(enemy_tranfsorm)  /**/);
+		auto& enemy_sprite(enemy.addComponent<SimpleSprite>(enemy_tranfsorm, "assets/enemy_ship.png", 100, 100, -90)  /**/);
+		auto& enemy_colider(enemy.addComponent<EnemyCollider>(enemy_tranfsorm, vecModelEnemy));
+		auto& enemy_AI(enemy.addComponent<EnemyComponent>(*target, enemy_tranfsorm));
+	}
+}
+
 
 

@@ -12,7 +12,6 @@
 bool findCorectCollider(Collider** col, const Entity& en);
 bool isIntersecting(const Wireframe& a, const Wireframe& b);
 
-
 void  EntityManager::update(float mFT)
 {
     //Tot ce se intampla aici se intampla intre frame-uri
@@ -41,7 +40,6 @@ void  EntityManager::update(float mFT)
         e->update(mFT);
     }
    
-
     collisionCheck();
 }
 
@@ -51,7 +49,7 @@ void EntityManager::draw(){
     }
     //This is just debuging
 
-    /*
+   /* 
     for (size_t f1 = 0; f1 < entities.size(); f1++) {
 
         Collider* colider1 = nullptr;
@@ -95,6 +93,11 @@ void EntityManager::draw(){
         Level::levelHeigh + Level::camera_position.y);
 
 
+}
+
+void EntityManager::clear(){
+    entities.clear();
+    reservedEntities.clear();
 }
 
 Entity& EntityManager::addEntity(){

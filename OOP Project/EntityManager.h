@@ -22,6 +22,7 @@ public:
     void update(float mFT);
     void draw();
 
+    void clear();
     //Aici putem adauga entitati direct in vectorul parcurs regulat, dar asta nu poate fi facut decant intre parcurgerile regulate ale 
     //vectorului
     Entity& addEntity();

@@ -23,13 +23,13 @@ int main(int argc, char* args[]) {
 		game.update(frameTime);
 		game.render();
 
-		//std::this_thread::sleep_for(std::chrono::milliseconds(16));  //creating a teoretical max FPS of 1000 for stability reasons, not very portable
-
 		frameTime = SDL_GetTicks() - frameStart;
 
+		//std::this_thread::sleep_for(std::chrono::milliseconds(16 - (int)frameTime));  //creating a teoretical max FPS of 1000 for stability reasons, not very portable
+
 		//Runtime debug info
-	//	std::cout << "FPS: "<<1000 / frameTime;
-	//	std::cout << "\r";
+		std::cout << "FPS: "<<1000 / frameTime;
+		std::cout << "\r";
 
 	}
 
