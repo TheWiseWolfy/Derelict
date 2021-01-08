@@ -31,9 +31,10 @@ void  EntityManager::update(float mFT)
 
     for (int i = 0; i < size; ++i) {
         entities.emplace_back(std::move(reservedEntities.at(i)));
-        reservedEntities.erase(reservedEntities.begin() + i);
     }
-       
+ 
+    reservedEntities.clear();
+
     //Update every component of 
     for (auto& e : entities) {
        // std::cout << e<<" ";
@@ -68,6 +69,7 @@ void EntityManager::draw(){
         }
     }
     */
+
     SDL_RenderDrawLine(Game::renderer, 
         1+ Level::camera_position.x,
         1 + Level::camera_position.y,
@@ -165,8 +167,10 @@ bool findCorectCollider(Collider** col,const Entity& en) {
         *col = &(en.getComponent<Collider>());
         return true;
     }
-
-  
+    else if (en.hasComponent<EnemyCollider>() /**/) {
+        *col = &(en.getComponent<EnemyCollider>());
+        return true;
+    }
     return false;
 }
 

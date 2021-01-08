@@ -26,21 +26,38 @@ struct PlayerCollider : Collider {
 	}
 };
 
+struct EnemyCollider : Collider {
+
+	EnemyCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
+
+	void onColision(Entity& objectHit)override {
+		Collider::onColision(objectHit);
+
+	}
+};
+
+
 struct ProjectileCollider : Collider {
 
 	ProjectileCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
 
 	void onColision(Entity& objectHit)override {
-
-
-		if (!objectHit.hasComponent<ProjectileCollider>()) {
+		if (objectHit.hasComponent<ProjectileCollider>()) {
 			Collider::onColision(objectHit);
 
 			this->getParentEntity()->destroy();
 		}
-		if (objectHit.hasComponent<AsteroidCollider>()) {
+		else if (objectHit.hasComponent<AsteroidCollider>()) {
 			this->getParentEntity()->destroy();
 			objectHit.destroy();
+		}
+		 else if (objectHit.hasComponent<EnemyCollider>()) {
+			this->getParentEntity()->destroy();
+			objectHit.getComponent<EnemyComponent>().onHit();
+		}
+		 else if (objectHit.hasComponent<PlayerCollider>()) {
+			this->getParentEntity()->destroy();
+			objectHit.getComponent<PlayerComponent>().onHit();
 		}
 	}
 };

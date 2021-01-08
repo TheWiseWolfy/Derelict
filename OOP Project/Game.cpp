@@ -45,6 +45,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	int flags = 0;
 	if (fullscreen) flags = SDL_WINDOW_FULLSCREEN;
 
+	//Initializari SDL
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0) {
 		std::cout << "**Initialization Start**\n";
 
@@ -64,12 +65,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 		std::cout << "Initialization Failed!\n";
 
 	}
-	
+
+	//Aici setam marimea camerei ca fiind marimea ferestrei pe care o folosim
 	Level::camera_size.x = width;
 	Level::camera_size.y = heigh;
 
 
-	//We prepare the actual game
+	//Aici setam parametri jocului, cream toate obiectele
 	setInitialState();
 
 }
@@ -148,9 +150,15 @@ void Game::setInitialState(){
 
 	asteroidGeneration();
 
-}
+	//Generate first enemy
 
-void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput);
+	auto& enemy = entityManager.addEntity();
+	auto& enemy_tranfsorm(enemy.addComponent<Transform>(new Vector2D(5200, 4800), M_PI / 2, 7.0f)  /**/);
+	auto& enemy_firearm(enemy.addComponent<FirearmComponent>(enemy_tranfsorm)  /**/);
+	auto& enemy_sprite(enemy.addComponent<SimpleSprite>(enemy_tranfsorm, "assets/enemy_ship.png", 100, 100, -90)  /**/);
+	auto& enemy_colider(enemy.addComponent<EnemyCollider>(enemy_tranfsorm, vecModelShip));
+	auto& enemy_AI(enemy.addComponent<EnemyComponent>(local_player,enemy_tranfsorm));
+}
 
 void  Game::asteroidGeneration() {
 
@@ -210,38 +218,3 @@ void  Game::asteroidGeneration() {
 }
 
 
-void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
-{
-	// Used 1D Perlin Noise
-	for (int x = 0; x < nWidth; x++)
-		for (int y = 0; y < nHeight; y++)
-		{
-			float fNoise = 0.0f;
-			float fScaleAcc = 0.0f;
-			float fScale = 1.0f;
-
-			for (int o = 0; o < nOctaves; o++)
-			{
-				int nPitch = nWidth >> o;
-				int nSampleX1 = (x / nPitch) * nPitch;
-				int nSampleY1 = (y / nPitch) * nPitch;
-
-				int nSampleX2 = (nSampleX1 + nPitch) % nWidth;
-				int nSampleY2 = (nSampleY1 + nPitch) % nWidth;
-
-				float fBlendX = (float)(x - nSampleX1) / (float)nPitch;
-				float fBlendY = (float)(y - nSampleY1) / (float)nPitch;
-
-				float fSampleT = (1.0f - fBlendX) * fSeed[nSampleY1 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY1 * nWidth + nSampleX2];
-				float fSampleB = (1.0f - fBlendX) * fSeed[nSampleY2 * nWidth + nSampleX1] + fBlendX * fSeed[nSampleY2 * nWidth + nSampleX2];
-
-				fScaleAcc += fScale;
-				fNoise += (fBlendY * (fSampleB - fSampleT) + fSampleT) * fScale;
-				fScale = fScale / fBias;
-			}
-
-			// Scale to seed range
-			fOutput[y * nWidth + x] = fNoise / fScaleAcc;
-		}
-
-}

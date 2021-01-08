@@ -65,15 +65,36 @@ public:
 
 struct PlayerComponent : public Component {
 
-    Transform& transform;
-    float playerForce = 5;
 
+    Transform& transform;
+
+    float playerForce = 5;
+    float counter = 0;
+    float life = 8;
     PlayerComponent(Transform& _transform);
 
     void update(float mFT) override;
 
 
     void draw() override;
+    void onHit();
+
+};
+
+struct EnemyComponent : public Component {
+
+    Transform& transform;
+    Entity& player;
+
+    float counter = 0;
+    float life = 3;
+
+    EnemyComponent(Entity& _player,Transform& _transform);
+
+    void update(float mFT) override;
+    void draw() override;
+
+    void onHit();
 };
 
 struct SimpleSprite :public Component {

@@ -1,10 +1,10 @@
 ﻿  Game.cpp
 C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\LevelManager.h(14,2): warning C4091: 'static ': ignored on left of 'Level' when no variable is declared
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(68,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(69,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(185,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(187,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(197,25): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(70,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(71,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(193,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(195,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(205,25): warning C4018: '<': signed/unsigned mismatch
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
           with
           [
@@ -14,13 +14,13 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty1=float
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(108): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(110): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
               _Other2=int
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(104): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(106): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
@@ -44,13 +44,13 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty1=float
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(121): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(123): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=int,
               _Other2=double
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(109): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(111): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=int,
@@ -70,7 +70,7 @@ C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(118,37): warning C4244
           [
               _Ty=int
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(126): message : see reference to function template instantiation 'T &Entity::addComponent<StaticSprite,const char(&)[19],int,int,int,int,int,int>(const char (&)[19],int &&,int &&,int &&,int &&,int &&,int &&)' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(128): message : see reference to function template instantiation 'T &Entity::addComponent<StaticSprite,const char(&)[19],int,int,int,int,int,int>(const char (&)[19],int &&,int &&,int &&,int &&,int &&,int &&)' being compiled
           with
           [
               T=StaticSprite
@@ -80,7 +80,7 @@ C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(118,37): warning C4244
           [
               _Ty=double
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(136): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D*,double,float>(Vector2D *&&,double &&,float &&)' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(138): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D*,double,float>(Vector2D *&&,double &&,float &&)' being compiled
           with
           [
               T=Transform
@@ -90,7 +90,7 @@ C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(118,37): warning C4244
           [
               _Ty=float
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(203): message : see reference to function template instantiation 'T &Entity::addComponent<SimpleSprite,Transform&,const char(&)[22],float,float,int>(Transform &,const char (&)[22],float &&,float &&,int &&)' being compiled
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(211): message : see reference to function template instantiation 'T &Entity::addComponent<SimpleSprite,Transform&,const char(&)[22],float,float,int>(Transform &,const char (&)[22],float &&,float &&,int &&)' being compiled
           with
           [
               T=SimpleSprite

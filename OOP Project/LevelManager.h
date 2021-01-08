@@ -13,3 +13,4 @@ public:
 	static Vector2D screenSpaceToGameSpace(int x, int y);
 };
 
+void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput);

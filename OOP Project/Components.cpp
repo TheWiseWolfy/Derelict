@@ -133,8 +133,6 @@ void Transform::update(float mFT) {
     position.x += velocity.x * mFT / 1000.0f;
     position.y += velocity.y * mFT / 1000.0f;
 
-    //cout << velocity.x <<" "<<velocity.y << " \n";
-    //Look, so this is broken, think about how to do it properly
     if (position.x <= 0)
         velocity.x +=100 ;
 
@@ -153,10 +151,24 @@ void Transform::update(float mFT) {
 
     left.x = cos(angle + M_PI / 2);
     left.y = sin(angle + M_PI / 2);
+
+    //We create a soft speed limit
+    if (velocity.x < -40.0f) {
+        velocity.x += 2.0f;
+    }
+    else if (velocity.x > 40.0f){
+        velocity.x -= 2.0f;
+    }
+
+    if (velocity.y < -40.0f){
+        velocity.y += 2.0f;
+    }
+    else if (velocity.y > 40.0f){
+        velocity.y -= 2.0f;
+    }
 }
 
 //COLIDER
-
 //Fuctia asta e o forma simpla de a calcula coliziuni si a aplica niste forte relativ realiste.
 Collider::Collider(Transform& _transform, Wireframe _vecModel) : transform(_transform) {
 
@@ -202,8 +214,14 @@ void Collider::draw()
 PlayerComponent::PlayerComponent(Transform& _transform) : transform(_transform) {}
 void PlayerComponent::update(float mFT) {
 
+    //Set up
+    Entity* player = this->getParentEntity();
     int mouseX, mouseY;
 
+    assert(player->hasComponent<FirearmComponent>());
+
+
+    //Keyboard control
     if (Game::event.type == SDL_KEYDOWN) {
         switch (Game::event.key.keysym.sym) {
         default:
@@ -226,46 +244,26 @@ void PlayerComponent::update(float mFT) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.left;
         }
     }
+    //Being able too shoot
 
-    //To redo
-    /*
-    if (transform.velocity.x > 0)
-        transform.velocity.x -= 0.5f;
-    else
-        transform.velocity.x += 0.5f;
+    //Enemy will shoot at a certain rate
+    FirearmComponent* firearm = &(player->getComponent<FirearmComponent>());
+    counter += mFT;
 
-    if (transform.velocity.y > 0)
-        transform.velocity.y -= 0.5f;
-    else
-        transform.velocity.y += 0.5f;
-    */
+    if (Game::event.type == SDL_KEYDOWN && Game::event.key.keysym.sym == SDLK_SPACE) {
+        if (counter >= 1000) {
+            firearm->fire();
+            counter = 0;
+        }
+   }
+
     //Control mouse
     if (SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 
         Vector2D gameMouse = Level::screenSpaceToGameSpace(mouseX, mouseY);
         float derisedAngle = atan2(transform.position.y - gameMouse.y, transform.position.x - gameMouse.x);
-
-
        transform.angle = derisedAngle;
-       /*
-        if (derisedAngle > 0){
-
-        if (transform.angle <= derisedAngle)
-              transform.angle+=0.1;
-        else if (transform.angle >= derisedAngle)
-              transform.angle-=0.1;
-        
-        }
-        else if (derisedAngle <= 0) {
-
-            if (transform.angle <= derisedAngle)
-                transform.angle += 0.1;
-            else if (transform.angle >= derisedAngle)
-                transform.angle -= 0.1;
-
-        }
-
-        */
+      
        /*
        std::cout <<"  ----------------------   " << std::endl;
        std::cout << mouseY << "  " << mouseX << std::endl;
@@ -277,8 +275,17 @@ void PlayerComponent::update(float mFT) {
         */
         
     }
+    
+    //We update the camera
     Level::camera_position.x = -transform.position.x + Level::camera_size.x / 2;
     Level::camera_position.y = -transform.position.y + Level::camera_size.y / 2;
+
+    //If the player has no life, we destryo the player
+    //std::cout << life << "\n";
+    if (life <= 0) {
+       // player->destroy();
+    }
+
 }
 void PlayerComponent::draw()
 {
@@ -289,6 +296,63 @@ void PlayerComponent::draw()
         transform.position.x + 100 * transform.forward.x + Level::camera_position.x,
         transform.position.y + 100 * transform.forward.y + Level::camera_position.y
     );
+}
+void PlayerComponent::onHit() {
+    life -= 1;
+}
+
+//ENEMY AI COMPONENT
+
+EnemyComponent::EnemyComponent(Entity& _player, Transform& _transform) : player(_player), transform(_transform)
+{
+}
+void EnemyComponent::update(float mFT){
+
+    //Set up
+    Entity* enemy = this->getParentEntity();
+    auto& playerTransform = player.getComponent<Transform>();
+
+
+    //If we have no firearm then we can not proceed
+    assert(enemy->hasComponent<FirearmComponent>() );
+
+    //Enemy will always face the player
+    Vector2D playerPoz = playerTransform.position;
+    float derisedAngle = atan2(transform.position.y - playerPoz.y, transform.position.x - playerPoz.x);
+    transform.angle = derisedAngle;
+
+    //Enemy will keep a proper distance from the player
+
+    Vector2D player_enemy = transform.position - playerTransform.position;
+
+    float distance = player_enemy.getMagnitude();
+
+    if (distance > 300.0f) {
+        transform.velocity += mFT * (1 / transform.mass) * transform.forward;
+
+    }
+    else if (distance < 800.0f) {
+        transform.velocity += mFT * -(1 / transform.mass) * transform.forward;
+
+    }
+
+    //Enemy will shoot at a certain rate
+    FirearmComponent* firearm = &(enemy->getComponent<FirearmComponent>() );
+    counter += mFT;
+    if (counter >= 1000 && distance < 600.0f) {
+        firearm->fire();
+        counter = 0;
+    }
+
+    if (life <= 0) {
+      enemy->destroy();
+    }
+}
+void EnemyComponent::draw(){
+
+}
+void EnemyComponent::onHit(){
+    life -= 1;
 }
 
 //SIMPLE SPRITE
@@ -395,18 +459,8 @@ void FirearmComponent::fire() {
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/bullet.png", 40, 40, 180) /**/);
     auto& SelfDistruct(rocket.addComponent<SelfDistruct>());
 }
-
 void FirearmComponent::update(float mFT) {
-    if (Game::event.type == SDL_KEYDOWN) {
 
-        switch (Game::event.key.keysym.sym) {
-        case(SDLK_SPACE):
-            fire();
-            break;
-        default:
-            break;
-        }
-    }
 }
 void FirearmComponent::draw()
 {
@@ -427,4 +481,3 @@ void SelfDistruct::update(float mFT){
 void SelfDistruct::draw()
 {
 }
-
