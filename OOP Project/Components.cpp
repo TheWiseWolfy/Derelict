@@ -11,6 +11,14 @@
 #include "SoundManager.h"
 #include "LevelManager.h"
 
+//#define firerate 100
+#define regen 5000
+#define thrusterSoundFreq 600
+#define minimumEnemyDistance 300.0f
+#define maximumEnemyDistance 700.0f
+#define enemyFireDistance 750.0f
+#define enemyFireRate 1000
+
 //TRANSFORM
 Transform::Transform(){
 
@@ -241,7 +249,7 @@ void PlayerComponent::update(float mFT) {
         if (Game::event.key.keysym.sym == SDLK_UP) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.forward;
 
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -249,7 +257,7 @@ void PlayerComponent::update(float mFT) {
         else if (Game::event.key.keysym.sym == SDLK_DOWN) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.forward;
             
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -257,7 +265,7 @@ void PlayerComponent::update(float mFT) {
         if (Game::event.key.keysym.sym == SDLK_LEFT) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.left;
             
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -265,7 +273,7 @@ void PlayerComponent::update(float mFT) {
         else if (Game::event.key.keysym.sym == SDLK_RIGHT) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.left;
 
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -293,7 +301,7 @@ void PlayerComponent::update(float mFT) {
         */
          
         //tragem la o anumita rata
-       if (fireCounter >= 1000) {
+       if (fireCounter >= firerate) {
            firearm->fire();
            fireCounter = 0;
        }
@@ -305,13 +313,13 @@ void PlayerComponent::update(float mFT) {
 
     //Regenerare pasiva
     if (life < maxLife) {
-        if (regenCounter >= 5000) {
+        if (regenCounter >= regen) {
             life++;
             regenCounter = 0;
         }
     }
 }
-
+//Some helpful debuging
 void PlayerComponent::draw(){
     //optional debug line
     //SDL_RenderDrawLine(Game::renderer,
@@ -348,17 +356,17 @@ void EnemyComponent::update(float mFT){
     Vector2D player_enemy = transform.position - playerTransform.position;
     float distance = player_enemy.getMagnitude();
 
-    if (distance > 300.0f) {
+    if (distance > minimumEnemyDistance) {
         transform.velocity += mFT * (1 / transform.mass) * transform.forward;
     }
-    else if (distance < 800.0f) {
+    else if (distance < maximumEnemyDistance) {
         transform.velocity += mFT * -(1 / transform.mass) * transform.forward;
     }
 
     //Cat este in raza, inamicul va trage in continuu
     FirearmComponent* firearm = &(enemy->getComponent<FirearmComponent>() );
     counter += mFT;
-    if (counter >= 1000 && distance < 600.0f) {
+    if (counter >= enemyFireRate && distance < enemyFireDistance) {
         firearm->fire();
         counter = 0;
     }

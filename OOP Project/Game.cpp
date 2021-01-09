@@ -85,18 +85,21 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 	}
 
 	fs.open("data.txt");
-	fs >> maxScore;
+	if (!fs) {
+		std::cout << "Error opening data.txt";
+	}else{
+		fs >> maxScore;
+	}
 
 	//Aici setam parametri jocului, cream toate obiectele
 	setInitialState();
 
 }
 void Game::reset() {
-
+	player->getComponent<PlayerComponent>().firerate = 1000;
 	stage = 1;
 	score = 0;
 	entityManager.clear();
-	Level::activeEnemies = 1;
 	lost = false;
 	player = nullptr;
 	setInitialState();
@@ -132,6 +135,8 @@ void Game::update(float frameTime) {
 			if (Level::activeEnemies == 0) {
 				stage++;
 				enemySpawn(stage, player);
+				float& firerate = player->getComponent<PlayerComponent>().firerate;
+				firerate = firerate * 4 / 5;
 				Level::activeEnemies = stage;
 			}
 
@@ -143,12 +148,13 @@ void Game::update(float frameTime) {
 				if (score > maxScore) {
 					fs.seekg(0);
 					fs << score;
-
 					maxScore = score;
 				}
 				
 			}
 		}
+
+		soundManager->ResumeMusic();
 	}
 	//Daca am pierdut, asteapta urmatoarea comanda
 	else if (lost) {                     
@@ -342,6 +348,9 @@ void Game::youLostMessage(){
 
 	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
+	SDL_FreeSurface(surfaceMessage);
+	SDL_DestroyTexture(Message);
+
 	//Second line
 	 surfaceMessage = TTF_RenderText_Solid(Font, toDisplay2.c_str(), Color);
 	 Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -362,7 +371,6 @@ void Game::youLostMessage(){
 
 	TTF_CloseFont(Font);
 	SDL_FreeSurface(surfaceMessage);
-	SDL_DestroyTexture(Message);
 	SDL_DestroyTexture(Message);
 }
 void Game::asteroidGeneration() {

@@ -72,6 +72,8 @@ struct PlayerComponent : public Component {
     float regenCounter = 0;
     float soundCounter = 0;
 
+    float firerate = 1000;
+
     float life = 8;
     float maxLife = 8;
 
