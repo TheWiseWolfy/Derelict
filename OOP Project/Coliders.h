@@ -1,5 +1,6 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 #pragma once
-
 
 #include "EntityManager.h"
 #include "Components.h"
@@ -33,10 +34,10 @@ struct EnemyCollider : Collider {
 
 	void onColision(Entity& objectHit)override {
 		Collider::onColision(objectHit);
-
 	}
 };
 
+//Un colider static
 struct StationCollider : Collider {
 
 	StationCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
@@ -51,6 +52,7 @@ struct StationCollider : Collider {
 	}
 };
 
+//Aici definim logica din spatele proiectilelor din joc
 struct ProjectileCollider : Collider {
 
 	ProjectileCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}

@@ -20,25 +20,26 @@ void SoundManager::PlayMusic(std::string filename, int loops) {
 	Mix_PlayMusic( assetManager->GetMusic(filename), loops);
 }
 
+void SoundManager::PauseMusic()
+{
+	if (Mix_PlayingMusic() != 0) {
+		Mix_PausedMusic();
+	}
+}
+
+void SoundManager::ResumeMusic()
+{
+	if (Mix_PausedMusic() != 0) {
+		Mix_ResumeMusic();
+	}
+}
+
 
 void SoundManager::PlaySound(std::string filename, int loops){
 
 	Mix_PlayChannel(-1,assetManager->GetSoundEffects(filename),loops);
 }
 
-void SoundManager::PauseSound(){
-
-	if (Mix_PlayingMusic() != 0) {
-		Mix_PausedMusic();
-	}
-
-}
-void SoundManager::ResumeSound(){
-	if (Mix_PausedMusic() != 0) {
-		Mix_ResumeMusic();
-	}
-
-}
 SoundManager::SoundManager(){
 	assetManager = AssetManager::Instance();
 

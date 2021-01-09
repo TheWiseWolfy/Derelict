@@ -5,17 +5,13 @@
 
 using Wireframe = std::vector<std::pair<float, float>>;
 
-// If `Entity` is an aggregate of components, `Manager` is an aggregate
-// of entities. Implementation is straightforward, and resembles the
-// previous one.
-
 class EntityManager
 {
 private:
-    //this is the vector that is being used every frame to update every active entity
+    //parcurgem vectorul in fiecare cadru si chemam fuctiile din interfata: update si draw
     std::vector<std::unique_ptr<Entity>> entities;
 
-    //this vector is used for standby entities that have to been introduced in the vector in between frames
+    //stocam entitati in asteptare, care vor fi introduse in joc inainte de urmatorul cadru
     std::vector<std::unique_ptr<Entity>> reservedEntities;
 
 public:
@@ -23,14 +19,13 @@ public:
     void draw();
 
     void clear();
-    //Aici putem adauga entitati direct in vectorul parcurs regulat, dar asta nu poate fi facut decant intre parcurgerile regulate ale 
-    //vectorului
+    //Aici putem adauga entitati direct in vectorul parcurs principal, dar asta lucru nu poate fi facut decant intre parcurgerile acestuia
     Entity& addEntity();
 
     //Aici putem "comanda" entitati, iar jocul le va stoca temporar si va astepta pana le poate muta in vectorul permanent.
     Entity& rezerveEntity();
 
-    //aici se intampla magia
+    //verificam coliziunea dintre obiectele din vector
     void collisionCheck();
 
 };

@@ -20,7 +20,7 @@ Vector2D Level::screenSpaceToGameSpace(int x, int y) {
 	return temp;
 }
 
-void PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
+void Level::PerlinNoise2D(int nWidth, int nHeight, float* fSeed, int nOctaves, float fBias, float* fOutput)
 {
 	// Used 1D Perlin Noise
 	for (int x = 0; x < nWidth; x++)

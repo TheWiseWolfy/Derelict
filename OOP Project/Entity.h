@@ -7,7 +7,6 @@
 #include <array>
 #include <bitset>
 #include <cassert>
-#include <typeinfo>
 #include <SDL.h>
 
 // Forward-declaration 
@@ -29,7 +28,7 @@ namespace Internal{
 template <typename T>
 inline ComponentID getComponentTypeID() noexcept
 {
-    //Compile time assert, anti prostie
+    //Compile time assert
     static_assert(std::is_base_of<Component, T>::value, "T must inherit from Component");
 
     //Pentru ca e static, o sa atribuie un singur id pentru fiecare tip de template chemat, si apoi sa tot returneze acelasi numar
@@ -62,7 +61,7 @@ using ComponentBitset = std::bitset<maxComponents>;
 //!!! Am un vector elegant cu unique_ptr pe care il accesez regulat, dar daca vreau sa accesed obiectul cu 
 //ID-ul 15, nu o sa creez 14 intervale nule, ca sa pun componenta relevanta pe locul 15. Alternativa e sa am 
 //un vector parcurs regulat, si un array al carui rol e doar sa stocheze adrese in caz ca am nevoie de ele si 
-//stiu doar ID-ul. Nu e elegant, e un pointer gol si totusi imi e frica sa fac si mai complicat de atat
+//stiu doar ID-ul. Nu e elegant.
 using ComponentArray = std::array<Component*, maxComponents>;
 
 //Clasa de entitate suporta fuctionalitati de:
@@ -70,6 +69,7 @@ using ComponentArray = std::array<Component*, maxComponents>;
 //Actualizez codul asociat tuturor componentelor
 //Entitatea este inlaturata daca are alive = "false"
 
+//Obiectul fundamental al jocului
 class Entity
 {
 private:
@@ -99,8 +99,7 @@ public:
         return componentBitset[getComponentTypeID<T>()];
     }
 
-    //compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
-    //chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu
+   
     template<typename T, typename... TArgs>
     T& addComponent(TArgs&&... mArgs);
 
@@ -110,22 +109,22 @@ public:
 };
 
 //compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
-//chema constructorul corespunzator fiecarui tip de componenta, e complicat, si totusi e zeci de fuctii pe care nu tre sa le scriu
+//chema constructorul corespunzator fiecarui tip de componenta
 
 template<typename T, typename ...TArgs>
  T& Entity::addComponent(TArgs && ...mArgs) {
 
     T* c = new T(std::forward<TArgs>(mArgs)...);   //cream o componenta noua, de tipul cu care a fost chemat template-ul, iau apoi ii dam argumentele primite
 
-    c->parentEntity = this;
-    //atasam "parintele componentei" ca intr-o lista inlantuita
+    c->parentEntity = this;           //atasam "parintele componentei" ca intr-o lista inlantuita
+
 
     // c( un pointer "gol" ) va fi de acum sub controlul unui containter de tip "unuqie_ptr" care respecta principile RAII
     //cand entitatea este distrusa, components va fi terminat, si unuqie_ptr va elibera memoria corespunzator
     std::unique_ptr<Component> uPtr(c); //-V824
     components.emplace_back(std::move(uPtr)); //uPtr este mutata in loc
 
-                                              //imformatie suplimentara pentru manipulare
+     //imformatie suplimentara pentru manipulare
     componentArray[getComponentTypeID<T>()] = c;
     componentBitset[getComponentTypeID<T>()] = true;
 

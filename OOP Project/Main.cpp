@@ -3,8 +3,6 @@
 
 //If something is worth doing, it's worth doing poorely 
 
-#include <chrono>
-#include <thread>
 #include "Game.h"
 
 float frameStart;

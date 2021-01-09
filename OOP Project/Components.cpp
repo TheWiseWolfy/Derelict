@@ -1,8 +1,6 @@
 #include <iostream>
 #include <math.h>
 #include <string>
-#include <chrono>
-#include <thread>
 
 #include "Game.h"
 #include "Components.h"
@@ -10,7 +8,6 @@
 #include "EntityManager.h"
 #include "LevelManager.h"
 #include "AssetManager.h"
-#include "TextureManager.h"
 #include "SoundManager.h"
 #include "LevelManager.h"
 
@@ -111,6 +108,7 @@ Transform::Transform(Vector2D* poz, Vector2D* vel, float an) {
     velocity.y = vel->y;
     angle = an;
 }
+
 void Transform::setPos(float x, float y) {
     position.x = x;
     position.y = y;
@@ -119,6 +117,7 @@ void Transform::setPos(Vector2D newPoz)
 {
     position = newPoz;
 }
+
 void Transform::setVel(float xv, float yv)
 {
     velocity.x = xv;
@@ -129,12 +128,14 @@ void Transform::setVel(Vector2D newVec)
     velocity = newVec;
 
 }
+
 void Transform::update(float mFT) {
 
-    //Update position based on velocity 
+    //Actualizam pozitia un fuctie de viteza curenta
     position.x += velocity.x * mFT / 1000.0f;
     position.y += velocity.y * mFT / 1000.0f;
 
+    //Aici cream limitele nivelului
     if (position.x <= 0)
         velocity.x +=100 ;
 
@@ -147,37 +148,38 @@ void Transform::update(float mFT) {
     if (position.y >= Level::levelHeigh)
         velocity.y -= 100;
 
-    //We create some useful vectors for orientation
+    //Actualizam niste vectori cu directii relevante pentru transform
     forward.x = cos(angle + M_PI);
     forward.y = sin(angle + M_PI);
 
     left.x = cos(angle + M_PI / 2);
     left.y = sin(angle + M_PI / 2);
 
-    //We create a soft speed limit
-    if (velocity.x < -40.0f) {
+    //O limita de viteza
+    if (velocity.x < -80.0f) {
         velocity.x += 2.0f;
     }
-    else if (velocity.x > 40.0f){
+    else if (velocity.x > 80.0f){
         velocity.x -= 2.0f;
     }
 
-    if (velocity.y < -40.0f){
+    if (velocity.y < -80.0f){
         velocity.y += 2.0f;
     }
-    else if (velocity.y > 40.0f){
+    else if (velocity.y > 80.0f){
         velocity.y -= 2.0f;
     }
 }
 
 //COLIDER
-//Fuctia asta e o forma simpla de a calcula coliziuni si a aplica niste forte relativ realiste.
 Collider::Collider(Transform& _transform, Wireframe _vecModel) : transform(_transform) {
 
     vecModel = _vecModel;
     vecModelinWolrd = _vecModel;
 
 }
+
+//Fuctia asta e o forma simpla de a calcula coliziuni si a aplica niste forte normale.
 void Collider::onColision(Entity& objectHit){
 
     Entity* currentEntity = this->getParentEntity();
@@ -193,6 +195,7 @@ void Collider::onColision(Entity& objectHit){
    // Vector2D newVelocityThis = transThis.velocity + difference.normalizeVector() * ( 100 / transThis.mass);
     transThis.setVel(newVelocityThis);
 }
+//Aici contextualizam forma colider-ului in lume printr-o rotatie si o translatie
 void Collider::update(float mFT) {
 
     // Rotate
@@ -207,6 +210,7 @@ void Collider::update(float mFT) {
     }
 
 }
+//Nimic de desenat
 void Collider::draw()
 {
 
@@ -214,14 +218,18 @@ void Collider::draw()
 
 //PLAYER COMPONENT
 PlayerComponent::PlayerComponent(Transform& _transform) : transform(_transform) {}
+
+//Controalele jocului
 void PlayerComponent::update(float mFT) {
 
     //Set up
     Entity* player = this->getParentEntity();
     int mouseX, mouseY;
 
+    //Ne asiguram ca avem cu ce lucra
     assert(player->hasComponent<FirearmComponent>());
 
+    //Un interval de timp la care tragem, ne regeneram si folosim un efect sonor pentru motoare
     soundCounter += mFT;
     regenCounter += mFT;
     fireCounter += mFT;
@@ -229,7 +237,7 @@ void PlayerComponent::update(float mFT) {
     //Keyboard control
     if (Game::event.type == SDL_KEYDOWN) {
 
-        //One idea for the controls, might redu later
+        //Aici sunt controalele principale de directie
         if (Game::event.key.keysym.sym == SDLK_UP) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.forward;
 
@@ -246,7 +254,6 @@ void PlayerComponent::update(float mFT) {
                 soundCounter = 0;
             }
         }
-
         if (Game::event.key.keysym.sym == SDLK_LEFT) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.left;
             
@@ -265,7 +272,7 @@ void PlayerComponent::update(float mFT) {
         }
     }
 
-    //Enemy will shoot at a certain rate
+    //Recuperam componenta firearm
     FirearmComponent* firearm = &(player->getComponent<FirearmComponent>());
 
     //Control mouse
@@ -284,18 +291,19 @@ void PlayerComponent::update(float mFT) {
        std::cout << "Curent angle is:" << transform.angle << "\n";  
        std::cout << "Curent desired angle is:" << derisedAngle << "\n"; 
         */
+         
+        //tragem la o anumita rata
        if (fireCounter >= 1000) {
            firearm->fire();
            fireCounter = 0;
        }
     }
     
-    //We update the camera
+    //Camera ramane centrata pe jucator
     Level::camera_position.x = -transform.position.x + Level::camera_size.x / 2;
     Level::camera_position.y = -transform.position.y + Level::camera_size.y / 2;
 
-    //If the player has no life, we destryo the player
-
+    //Regenerare pasiva
     if (life < maxLife) {
         if (regenCounter >= 5000) {
             life++;
@@ -303,6 +311,7 @@ void PlayerComponent::update(float mFT) {
         }
     }
 }
+
 void PlayerComponent::draw(){
     //optional debug line
     //SDL_RenderDrawLine(Game::renderer,
@@ -312,12 +321,13 @@ void PlayerComponent::draw(){
     //    transform.position.y + 100 * transform.forward.y + Level::camera_position.y
     //);
 }
+//Fuctie chemata la lovitura cu un proiectil
 void PlayerComponent::onHit() {
     life -= 1;
 }
 
 //ENEMY AI COMPONENT
-EnemyComponent::EnemyComponent(Entity& _player, Transform& _transform) : player(_player), transform(_transform)
+EnemyComponent::EnemyComponent(const Entity& _player, Transform& _transform) : player(_player), transform(_transform)
 {
 }
 void EnemyComponent::update(float mFT){
@@ -326,31 +336,26 @@ void EnemyComponent::update(float mFT){
     Entity* enemy = this->getParentEntity();
     auto& playerTransform = player.getComponent<Transform>();
 
-
-    //If we have no firearm then we can not proceed
+    //Ne asiguram ca avem firearm
     assert(enemy->hasComponent<FirearmComponent>() );
 
-    //Enemy will always face the player
+    //Inamicul se uita mareu la jucator
     Vector2D playerPoz = playerTransform.position;
     float derisedAngle = atan2(transform.position.y - playerPoz.y, transform.position.x - playerPoz.x);
     transform.angle = derisedAngle;
 
-    //Enemy will keep a proper distance from the player
-
+    //Pastram o anumita distanta fata de jucator
     Vector2D player_enemy = transform.position - playerTransform.position;
-
     float distance = player_enemy.getMagnitude();
 
     if (distance > 300.0f) {
         transform.velocity += mFT * (1 / transform.mass) * transform.forward;
-
     }
     else if (distance < 800.0f) {
         transform.velocity += mFT * -(1 / transform.mass) * transform.forward;
-
     }
 
-    //Enemy will shoot at a certain rate
+    //Cat este in raza, inamicul va trage in continuu
     FirearmComponent* firearm = &(enemy->getComponent<FirearmComponent>() );
     counter += mFT;
     if (counter >= 1000 && distance < 600.0f) {
@@ -358,11 +363,13 @@ void EnemyComponent::update(float mFT){
         counter = 0;
     }
 
+    //Daca ramane fara viata, acesta va murii si va actualiza cifrele relevante
     if (life <= 0) {
-      Level::activeEnemies -= 1;
+      Level::activeEnemies--;
       Game::score++;
-      SoundManager::Instance()->PlaySound("assets/explosion.wav", 0);
       enemy->destroy();
+
+      SoundManager::Instance()->PlaySound("assets/explosion.wav", 0);     //sunet de explozie
     }
 }
 void EnemyComponent::draw(){
@@ -376,39 +383,39 @@ void EnemyComponent::onHit(){
 SimpleSprite::SimpleSprite(Transform& _transform, const char* texturesheet, int h, int w, int rotation) :transform(_transform) {
 
     objTexture = AssetManager::Instance()->GetTexture(texturesheet);
-    //We store the size of the texture
+
+    //Stocam marimea texturii
     orizontalSize = 0;
     verticalSize = 0;
 
     SDL_QueryTexture(objTexture, NULL, NULL, &orizontalSize, &verticalSize);
 
-    //We define the map as the entire image.
+    //Aici definim sprit-ul ca fiind intreaga imagine
     srcRect.h = verticalSize;
     srcRect.w =  orizontalSize;
     srcRect.x = 0;
     srcRect.y = 0;
 
-    //We place it in the correct spot
+    //Definim marimea pe ecran
     destRect.h = h;
     destRect.w = w;
 
+    //Rotatia
     spriteRotation = rotation;
 }
 SimpleSprite::~SimpleSprite(){
-  //  SDL_DestroyTexture(objTexture);
 }
 void SimpleSprite::update(float mFT) {
-    //Draw the sprite at the position we desire
-
+    //Desenam  obiectul in fuctie de pozitia lui relativ la camera.
     destRect.x = Level::camera_position.x + transform.x() - destRect.h / 2.0f;
     destRect.y = Level::camera_position.y + transform.y() - destRect.w / 2.0f;
 }
 void SimpleSprite::draw() {
-    //render in window space
+    //desenarea propiuzisa
     if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( /**/(transform.angle * 180) / M_PI + spriteRotation),
         NULL, SDL_FLIP_NONE) != 0)
     {
-        std::cout << "Simple spirte draw error:"<< SDL_GetError()  << '\n';
+        std::cout << "Simple spirte draw error: "<< SDL_GetError()  << '\n';
     }
 }
 
@@ -416,20 +423,17 @@ void SimpleSprite::draw() {
 StaticSprite::StaticSprite( const char* texturesheet, int _x, int _y,int h, int w,float _scroll,int rotation) {
     objTexture = AssetManager::Instance()->GetTexture(texturesheet);
 
-    //We store the size of the texture
     orizontalSize = 0;
     verticalSize = 0;
 
     SDL_QueryTexture(objTexture, NULL, NULL, &orizontalSize, &verticalSize);
 
-
-    //We define the map as the entire image.
     srcRect.h = verticalSize;
     srcRect.w = orizontalSize;
     srcRect.x = 0;
     srcRect.y = 0;
 
-    //We place it in the correct spot
+    //Plasam obiectul static pe ecran
     destRect.h = h;
     destRect.w = w;
     destRect.x = 0;
@@ -438,34 +442,30 @@ StaticSprite::StaticSprite( const char* texturesheet, int _x, int _y,int h, int 
     x = _x;
     y= _y;
     spriteRotation = rotation;
-    scroll = _scroll;
+    scrollRate = _scroll;
 }
 StaticSprite::~StaticSprite(){
 }
 void StaticSprite::update(float mFT){
  
-    if (scroll != 0){
-    destRect.x = Level::camera_position.x / scroll + x ;
-    destRect.y = Level::camera_position.y / scroll + y;
+    //Putem crea un efect de paralax daca miscam obiectul relativ la camera dar impartit la o anumita rata, obiectele cu rata mai mare o sa para mai departe
+    if (scrollRate != 0){
+    destRect.x = Level::camera_position.x / scrollRate + x ;
+    destRect.y = Level::camera_position.y / scrollRate + y;
     }
 }
 void StaticSprite::draw(){
-
-  
     if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect,spriteRotation,
         NULL, SDL_FLIP_NONE) != 0)
     {
         std::cout << SDL_GetError() << '\n';
-    }
-
-
-   
+    }  
 }
 
 //FIREARM COMPONENT
 FirearmComponent::FirearmComponent(Transform& _transform) : transform(_transform) {}
+//Instantiem un proiectil cu un colider potrivit, la pozitia si cu viteza potrivita
 void FirearmComponent::fire() {
-   auto& rocket(Game::entityManager.rezerveEntity());
 
    Wireframe vecModelShip = {
    {-25.0,0},
@@ -473,13 +473,15 @@ void FirearmComponent::fire() {
    {25.0f,25.0f}
    };
 
-   Vector2D poz(transform.position.x, transform.position.y);
+   //"comandam" obiectul ca acesta sa fie introdus inainte de urmatorul cadru
+   auto& rocket(Game::entityManager.rezerveEntity());
+    Vector2D poz(transform.position.x, transform.position.y);
     auto& rocket_transform(rocket.addComponent<Transform>(poz + transform.forward * 70, 1000 * transform.forward + transform.velocity, transform.angle ,3)/**/);
     auto& rochet_colider(rocket.addComponent<ProjectileCollider>(rocket_transform, vecModelShip));
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/bullet.png", 40, 40, 180) /**/);
     auto& SelfDistruct(rocket.addComponent<SelfDistruct>());
 
-    SoundManager::Instance()->PlaySound("assets/laser.wav", 0);
+    SoundManager::Instance()->PlaySound("assets/laser.wav", 0);   //pew pew
 }
 void FirearmComponent::update(float mFT) {
 
