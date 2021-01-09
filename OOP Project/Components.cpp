@@ -164,19 +164,19 @@ void Transform::update(float mFT) {
     left.y = (float)sin(angle + M_PI / 2);
 
     //O limita de viteza
-    //if (velocity.x < -80.0f) {
-    //    velocity.x += 2.0f;
-    //}
-    //else if (velocity.x > 80.0f){
-    //    velocity.x -= 2.0f;
-    //}
+    if (velocity.x < -1300.0f) {
+        velocity.x += 0.3f;
+    }
+    else if (velocity.x > 1300.0f){
+        velocity.x -= 0.3f;
+    }
 
-    //if (velocity.y < -80.0f){
-    //    velocity.y += 2.0f;
-    //}
-    //else if (velocity.y > 80.0f){
-    //    velocity.y -= 2.0f;
-    //}
+    if (velocity.y < -1300.0f){
+        velocity.y += 0.3f;
+    }
+    else if (velocity.y > 1300.0f){
+        velocity.y -= 0.3f;
+    }
 }
 
 //COLIDER
@@ -277,6 +277,10 @@ void PlayerComponent::update(float mFT) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
+        }
+         if (Game::event.key.keysym.sym == SDLK_SPACE) {
+             transform.velocity += transform.velocity * (-1 / 10.0f);
+
         }
     }
 
