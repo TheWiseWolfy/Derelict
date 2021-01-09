@@ -97,7 +97,6 @@ public:
     inline bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
     }
-
    
     template<typename T, typename... TArgs>
     T& addComponent(TArgs&&... mArgs);

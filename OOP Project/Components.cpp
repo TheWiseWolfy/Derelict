@@ -484,7 +484,7 @@ void FirearmComponent::fire() {
    //"comandam" obiectul ca acesta sa fie introdus inainte de urmatorul cadru
    auto& rocket(Game::entityManager.rezerveEntity());
     Vector2D poz(transform.position.x, transform.position.y);
-    auto& rocket_transform(rocket.addComponent<Transform>(poz + transform.forward * 70, 1000 * transform.forward + transform.velocity, transform.angle ,3)/**/);
+    auto& rocket_transform(rocket.addComponent<Transform>(poz + transform.forward * 80, 1000 * transform.forward + transform.velocity, transform.angle ,3)/**/);
     auto& rochet_colider(rocket.addComponent<ProjectileCollider>(rocket_transform, vecModelShip));
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/bullet.png", 40, 40, 180) /**/);
     auto& SelfDistruct(rocket.addComponent<SelfDistruct>());
