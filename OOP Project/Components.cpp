@@ -11,6 +11,14 @@
 #include "SoundManager.h"
 #include "LevelManager.h"
 
+//#define firerate 100
+#define regen 5000
+#define thrusterSoundFreq 600
+#define minimumEnemyDistance 300.0f
+#define maximumEnemyDistance 700.0f
+#define enemyFireDistance 750.0f
+#define enemyFireRate 1000
+
 //TRANSFORM
 Transform::Transform(){
 
@@ -149,26 +157,26 @@ void Transform::update(float mFT) {
         velocity.y -= 100;
 
     //Actualizam niste vectori cu directii relevante pentru transform
-    forward.x = cos(angle + M_PI);
-    forward.y = sin(angle + M_PI);
+    forward.x = (float)cos(angle + M_PI);
+    forward.y = (float)sin(angle + M_PI);
 
-    left.x = cos(angle + M_PI / 2);
-    left.y = sin(angle + M_PI / 2);
+    left.x = (float)cos(angle + M_PI / 2);
+    left.y = (float)sin(angle + M_PI / 2);
 
     //O limita de viteza
-    if (velocity.x < -80.0f) {
-        velocity.x += 2.0f;
-    }
-    else if (velocity.x > 80.0f){
-        velocity.x -= 2.0f;
-    }
+    //if (velocity.x < -80.0f) {
+    //    velocity.x += 2.0f;
+    //}
+    //else if (velocity.x > 80.0f){
+    //    velocity.x -= 2.0f;
+    //}
 
-    if (velocity.y < -80.0f){
-        velocity.y += 2.0f;
-    }
-    else if (velocity.y > 80.0f){
-        velocity.y -= 2.0f;
-    }
+    //if (velocity.y < -80.0f){
+    //    velocity.y += 2.0f;
+    //}
+    //else if (velocity.y > 80.0f){
+    //    velocity.y -= 2.0f;
+    //}
 }
 
 //COLIDER
@@ -199,12 +207,12 @@ void Collider::onColision(Entity& objectHit){
 void Collider::update(float mFT) {
 
     // Rotate
-    for (int i = 0; i < vecModelinWolrd.size(); i++) {
+    for (size_t i = 0; i < vecModelinWolrd.size(); i++) {
         vecModelinWolrd[i].first = vecModel[i].first * cos(transform.angle) - vecModel[i].second * sin(transform.angle);
         vecModelinWolrd[i].second = vecModel[i].first * sin(transform.angle) + vecModel[i].second * cos(transform.angle);
     }
     //Translate
-    for (int i = 0; i < vecModel.size(); ++i) {
+    for (size_t i = 0; i < vecModel.size(); ++i) {
         vecModelinWolrd[i].first = vecModelinWolrd[i].first + transform.position.x;
         vecModelinWolrd[i].second = vecModelinWolrd[i].second + transform.position.y;
     }
@@ -241,7 +249,7 @@ void PlayerComponent::update(float mFT) {
         if (Game::event.key.keysym.sym == SDLK_UP) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.forward;
 
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -249,7 +257,7 @@ void PlayerComponent::update(float mFT) {
         else if (Game::event.key.keysym.sym == SDLK_DOWN) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.forward;
             
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -257,7 +265,7 @@ void PlayerComponent::update(float mFT) {
         if (Game::event.key.keysym.sym == SDLK_LEFT) {
             transform.velocity += mFT * (playerForce / transform.mass) * transform.left;
             
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -265,7 +273,7 @@ void PlayerComponent::update(float mFT) {
         else if (Game::event.key.keysym.sym == SDLK_RIGHT) {
             transform.velocity += mFT * -(playerForce / transform.mass) * transform.left;
 
-            if (soundCounter > 1000) {
+            if (soundCounter > thrusterSoundFreq) {
                 SoundManager::Instance()->PlaySound("assets/RocketSound.wav", 0);
                 soundCounter = 0;
             }
@@ -293,7 +301,7 @@ void PlayerComponent::update(float mFT) {
         */
          
         //tragem la o anumita rata
-       if (fireCounter >= 1000) {
+       if (fireCounter >= firerate) {
            firearm->fire();
            fireCounter = 0;
        }
@@ -305,13 +313,13 @@ void PlayerComponent::update(float mFT) {
 
     //Regenerare pasiva
     if (life < maxLife) {
-        if (regenCounter >= 5000) {
+        if (regenCounter >= regen) {
             life++;
             regenCounter = 0;
         }
     }
 }
-
+//Some helpful debuging
 void PlayerComponent::draw(){
     //optional debug line
     //SDL_RenderDrawLine(Game::renderer,
@@ -348,17 +356,17 @@ void EnemyComponent::update(float mFT){
     Vector2D player_enemy = transform.position - playerTransform.position;
     float distance = player_enemy.getMagnitude();
 
-    if (distance > 300.0f) {
+    if (distance > minimumEnemyDistance) {
         transform.velocity += mFT * (1 / transform.mass) * transform.forward;
     }
-    else if (distance < 800.0f) {
+    else if (distance < maximumEnemyDistance) {
         transform.velocity += mFT * -(1 / transform.mass) * transform.forward;
     }
 
     //Cat este in raza, inamicul va trage in continuu
     FirearmComponent* firearm = &(enemy->getComponent<FirearmComponent>() );
     counter += mFT;
-    if (counter >= 1000 && distance < 600.0f) {
+    if (counter >= enemyFireRate && distance < enemyFireDistance) {
         firearm->fire();
         counter = 0;
     }
@@ -412,7 +420,7 @@ void SimpleSprite::update(float mFT) {
 }
 void SimpleSprite::draw() {
     //desenarea propiuzisa
-    if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( /**/(transform.angle * 180) / M_PI + spriteRotation),
+    if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( ( (double)transform.angle * 180.0f) / M_PI + spriteRotation),
         NULL, SDL_FLIP_NONE) != 0)
     {
         std::cout << "Simple spirte draw error: "<< SDL_GetError()  << '\n';
@@ -476,7 +484,7 @@ void FirearmComponent::fire() {
    //"comandam" obiectul ca acesta sa fie introdus inainte de urmatorul cadru
    auto& rocket(Game::entityManager.rezerveEntity());
     Vector2D poz(transform.position.x, transform.position.y);
-    auto& rocket_transform(rocket.addComponent<Transform>(poz + transform.forward * 70, 1000 * transform.forward + transform.velocity, transform.angle ,3)/**/);
+    auto& rocket_transform(rocket.addComponent<Transform>(poz + transform.forward * 80, 1000 * transform.forward + transform.velocity, transform.angle ,3)/**/);
     auto& rochet_colider(rocket.addComponent<ProjectileCollider>(rocket_transform, vecModelShip));
     auto& rocket_transform_sprite(rocket.addComponent<SimpleSprite>(rocket_transform, "assets/bullet.png", 40, 40, 180) /**/);
     auto& SelfDistruct(rocket.addComponent<SelfDistruct>());

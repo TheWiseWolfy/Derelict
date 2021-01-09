@@ -82,7 +82,6 @@ private:
 public:
 
     Entity() {
-        
     }
 
     // Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
@@ -98,7 +97,6 @@ public:
     inline bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
     }
-
    
     template<typename T, typename... TArgs>
     T& addComponent(TArgs&&... mArgs);
