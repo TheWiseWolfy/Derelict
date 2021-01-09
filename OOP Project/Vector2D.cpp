@@ -11,6 +11,22 @@ Vector2D Vector2D::operator+=(const Vector2D& v){
 	return *this;
 }
 
+Vector2D Vector2D::normalizeVector(){
+	Vector2D temp;
+	float mag = this->getMagnitude();
+	if (mag != 0) {
+		temp.x = x / mag;
+		temp.y = y / mag;
+	}
+	else {
+		temp.x = x;
+		temp.y = y;
+
+		//std::cout << "You normalized a null vector\n";
+	}
+	return temp;
+}
+
 Vector2D operator*(const Vector2D& v,float scalar){
 	Vector2D temp;
 	temp.x = v.x * scalar;
@@ -28,6 +44,14 @@ Vector2D operator+(const Vector2D& v1, const Vector2D& v2){
 	Vector2D temp;
 	temp.x = v1.x + v2.x;
 	temp.y = v1.y + v2.y;
+	return temp;
+}
+
+Vector2D operator-(const Vector2D& v1, const Vector2D& v2)
+{
+	Vector2D temp;
+	temp.x = v1.x - v2.x;
+	temp.y = v1.y - v2.y;
 	return temp;
 }
 

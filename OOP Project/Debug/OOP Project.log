@@ -1,4 +1,2 @@
-﻿  EntityManager.cpp
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.h(44,2): warning C4091: 'static ': ignored on left of 'Level' when no variable is declared
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Components.h(57,16): warning C4305: 'initializing': truncation from 'double' to 'float'
+﻿  AssetManager.cpp
   OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe
