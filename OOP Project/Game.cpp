@@ -136,7 +136,7 @@ void Game::update(float frameTime) {
 				stage++;
 				enemySpawn(stage, player);
 				float& firerate = player->getComponent<PlayerComponent>().firerate;
-				firerate = firerate * 4 / 5;
+				firerate = firerate * 9 / 10;
 				Level::activeEnemies = stage;
 			}
 

@@ -71,7 +71,7 @@ void EntityManager::draw(){
     */
 
     //Desenam limitele nivelului
-   /* SDL_RenderDrawLine(Game::renderer, 
+    SDL_RenderDrawLine(Game::renderer, 
         1+ Level::camera_position.x,
         1 + Level::camera_position.y,
         Level::levelWidth + Level::camera_position.x,
@@ -93,7 +93,7 @@ void EntityManager::draw(){
         Level::levelWidth + Level::camera_position.x,
         1 + Level::camera_position.y,
         Level::levelWidth + Level::camera_position.x,
-        Level::levelHeigh + Level::camera_position.y);*/
+        Level::levelHeigh + Level::camera_position.y);
 }
 
 void EntityManager::clear(){
