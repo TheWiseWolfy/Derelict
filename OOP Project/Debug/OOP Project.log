@@ -1,2 +1,96 @@
-﻿  AssetManager.cpp
+﻿  Game.cpp
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(71,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(72,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(249,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(438,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty1=float
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(193): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=double,
+              _Other2=int
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(189): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=double,
+              _Other2=int
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty1=float
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(206): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int,
+              _Other2=double
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(194): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int,
+              _Other2=double
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(116,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(210): message : see reference to function template instantiation 'T &Entity::addComponent<StaticSprite,const char(&)[19],int,int,int,int,int,int>(const char (&)[19],int &&,int &&,int &&,int &&,int &&,int &&)' being compiled
+          with
+          [
+              T=StaticSprite
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(116,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(221): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D*,double,float>(Vector2D *&&,double &&,float &&)' being compiled
+          with
+          [
+              T=Transform
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(116,37): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(421): message : see reference to function template instantiation 'T &Entity::addComponent<SimpleSprite,Transform&,const char(&)[22],float,float,int>(Transform &,const char (&)[22],float &&,float &&,int &&)' being compiled
+          with
+          [
+              T=SimpleSprite
+          ]
   OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Debug\OOP Project.exe

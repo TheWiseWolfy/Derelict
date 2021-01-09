@@ -125,8 +125,9 @@ private:
     SDL_Texture* objTexture;
     SDL_Rect srcRect, destRect;
     int orizontalSize, verticalSize;
-    int spriteRotation,scrollRate;
+    int spriteRotation;
     int x, y;
+    float scrollRate;
 
 public:
     StaticSprite( const char* texturesheet,int x,int y,int h, int w,float scrollRate, int rotation);

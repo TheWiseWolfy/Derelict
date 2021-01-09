@@ -2,7 +2,7 @@
 
 #include "Vector2D.h"
 
-static class Level {
+class Level {
 public:
 	static float levelWidth;
 	static float levelHeigh;

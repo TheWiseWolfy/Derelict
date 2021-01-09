@@ -2,6 +2,7 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <SDL_ttf.h>
 
@@ -17,6 +18,10 @@ SDL_Event Game::event;				//un queue cu evenimente
 
 EntityManager Game::entityManager;		
 int Game::score = 0;
+//Some file
+
+std::fstream fs;
+int maxScore = 0;
 
 Game::Game(const char* title, int xpos, int ypos, int width, int heigh, bool fullscreen){
 	init(title, xpos, ypos, width, heigh, fullscreen);
@@ -26,9 +31,11 @@ Game::~Game(){
 	
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
-
+	
 	assetManager->Relase();
 	soundManager->Release();
+
+	fs.close();
 
 	std::cout << "Game Cleanned Succesfully" << '\n';
 }
@@ -76,6 +83,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int heigh, boo
 		std::cout << "Sound managern itialization Failed!\n";
 		isRunning = false;
 	}
+
+	fs.open("data.txt");
+	fs >> maxScore;
+
 	//Aici setam parametri jocului, cream toate obiectele
 	setInitialState();
 
@@ -127,6 +138,15 @@ void Game::update(float frameTime) {
 			//Daca player-ul nu mai are viata atunci am pierdut
 			if (player->getComponent<PlayerComponent>().life <= 0) {
 				lost = true;
+
+
+				if (score > maxScore) {
+					fs.seekg(0);
+					fs << score;
+
+					maxScore = score;
+				}
+				
 			}
 		}
 	}
@@ -262,6 +282,8 @@ void Game::drawHUD(){
 	//Scriem scorul jucatorului pe ecran
 	std::string toDisplay = "Score: ";
 	toDisplay += std::to_string(score);
+	toDisplay += " Enemies: ";
+	toDisplay += std::to_string(Level::activeEnemies);
 
 	TTF_Font* Font = TTF_OpenFont("Sans.ttf", 33); //deschidem un font cu care sa scriem
 	if (Font == nullptr) {
@@ -283,7 +305,6 @@ void Game::drawHUD(){
 	Message_rect.w = orizontalSize; 
 	Message_rect.h = verticalSize; 
 
-
 	TTF_CloseFont(Font);
 	SDL_RenderCopy(renderer, Message, NULL, &Message_rect); 
 	SDL_FreeSurface(surfaceMessage);
@@ -296,11 +317,14 @@ void Game::youLostMessage(){
 	toDisplay += std::to_string(score);
 	toDisplay +=  " (R to start again, X to quit)";
 
+	std::string toDisplay2 = "Max score: ";
+	toDisplay2 += std::to_string(maxScore);
+
 	TTF_Font* Font = TTF_OpenFont("Sans.ttf", 50); //this opens a font style and sets a size
 	if (Font == nullptr) {
 		std::cout << TTF_GetError();
 	}
-
+	//Fisrt line 
 	SDL_Color Color = { 0, 0, 0 };
 	SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Font, toDisplay.c_str(), Color);
 	SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
@@ -316,9 +340,25 @@ void Game::youLostMessage(){
 	Message_rect.w = orizontalSize;
 	Message_rect.h = verticalSize;
 
+	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
 
+	//Second line
+	 surfaceMessage = TTF_RenderText_Solid(Font, toDisplay2.c_str(), Color);
+	 Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+
+	 orizontalSize = 0;
+	 verticalSize = 0;
+
+	SDL_QueryTexture(Message, NULL, NULL, &orizontalSize, &verticalSize);
+
+	Message_rect.x = 640 - orizontalSize / 2;
+	Message_rect.y = 500 - verticalSize / 2;
+	Message_rect.w = orizontalSize;
+	Message_rect.h = verticalSize;
 
 	SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+
+	//End
 
 	TTF_CloseFont(Font);
 	SDL_FreeSurface(surfaceMessage);
@@ -371,7 +411,7 @@ void Game::asteroidGeneration() {
 				float randomScale = (float)rand() / (float)RAND_MAX;
 
 				//Trebuie sa ne asiguram ca forma colider-ului asteroidului corespunde cu marimea sa randomizata
-				for (int f1 = 0; f1 < vecModelAsteroid.size(); f1++) {
+				for (size_t f1 = 0; f1 < vecModelAsteroid.size(); f1++) {
 					updatedModelAsteroid[f1].first = vecModelAsteroid[f1].first * randomScale  + vecModelAsteroid[f1].first;
 					updatedModelAsteroid[f1].second = vecModelAsteroid[f1].second * randomScale + vecModelAsteroid[f1].second;
 				}

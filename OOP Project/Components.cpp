@@ -149,26 +149,26 @@ void Transform::update(float mFT) {
         velocity.y -= 100;
 
     //Actualizam niste vectori cu directii relevante pentru transform
-    forward.x = cos(angle + M_PI);
-    forward.y = sin(angle + M_PI);
+    forward.x = (float)cos(angle + M_PI);
+    forward.y = (float)sin(angle + M_PI);
 
-    left.x = cos(angle + M_PI / 2);
-    left.y = sin(angle + M_PI / 2);
+    left.x = (float)cos(angle + M_PI / 2);
+    left.y = (float)sin(angle + M_PI / 2);
 
     //O limita de viteza
-    if (velocity.x < -80.0f) {
-        velocity.x += 2.0f;
-    }
-    else if (velocity.x > 80.0f){
-        velocity.x -= 2.0f;
-    }
+    //if (velocity.x < -80.0f) {
+    //    velocity.x += 2.0f;
+    //}
+    //else if (velocity.x > 80.0f){
+    //    velocity.x -= 2.0f;
+    //}
 
-    if (velocity.y < -80.0f){
-        velocity.y += 2.0f;
-    }
-    else if (velocity.y > 80.0f){
-        velocity.y -= 2.0f;
-    }
+    //if (velocity.y < -80.0f){
+    //    velocity.y += 2.0f;
+    //}
+    //else if (velocity.y > 80.0f){
+    //    velocity.y -= 2.0f;
+    //}
 }
 
 //COLIDER
@@ -199,12 +199,12 @@ void Collider::onColision(Entity& objectHit){
 void Collider::update(float mFT) {
 
     // Rotate
-    for (int i = 0; i < vecModelinWolrd.size(); i++) {
+    for (size_t i = 0; i < vecModelinWolrd.size(); i++) {
         vecModelinWolrd[i].first = vecModel[i].first * cos(transform.angle) - vecModel[i].second * sin(transform.angle);
         vecModelinWolrd[i].second = vecModel[i].first * sin(transform.angle) + vecModel[i].second * cos(transform.angle);
     }
     //Translate
-    for (int i = 0; i < vecModel.size(); ++i) {
+    for (size_t i = 0; i < vecModel.size(); ++i) {
         vecModelinWolrd[i].first = vecModelinWolrd[i].first + transform.position.x;
         vecModelinWolrd[i].second = vecModelinWolrd[i].second + transform.position.y;
     }
@@ -412,7 +412,7 @@ void SimpleSprite::update(float mFT) {
 }
 void SimpleSprite::draw() {
     //desenarea propiuzisa
-    if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( /**/(transform.angle * 180) / M_PI + spriteRotation),
+    if (SDL_RenderCopyEx(Game::renderer, objTexture, &srcRect, &destRect, ( ( (double)transform.angle * 180.0f) / M_PI + spriteRotation),
         NULL, SDL_FLIP_NONE) != 0)
     {
         std::cout << "Simple spirte draw error: "<< SDL_GetError()  << '\n';
