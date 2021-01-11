@@ -288,12 +288,8 @@ void PlayerComponent::update(float mFT) {
     FirearmComponent* firearm = &(player->getComponent<FirearmComponent>());
 
     //Control mouse
-    if(SDL_GetMouseState(&mouseX, &mouseY) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+    if(SDL_GetMouseState(&mouseX, &mouseY) && SDL_BUTTON(SDL_BUTTON_LEFT)) {
 
-        Vector2D gameMouse = Level::screenSpaceToGameSpace(mouseX, mouseY);
-        float derisedAngle = atan2(transform.position.y - gameMouse.y, transform.position.x - gameMouse.x);
-         transform.angle = derisedAngle;
-  
        /*
        std::cout <<"  ----------------------   " << std::endl;
        std::cout << mouseY << "  " << mouseX << std::endl;
@@ -310,6 +306,10 @@ void PlayerComponent::update(float mFT) {
            fireCounter = 0;
        }
     }
+
+    Vector2D gameMouse = Level::screenSpaceToGameSpace(mouseX, mouseY);
+    float derisedAngle = atan2(transform.position.y - gameMouse.y, transform.position.x - gameMouse.x);
+    transform.angle = derisedAngle;
     
     //Camera ramane centrata pe jucator
     Level::camera_position.x = -transform.position.x + Level::camera_size.x / 2;

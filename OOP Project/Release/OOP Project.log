@@ -1,8 +1,8 @@
-﻿  Game.cpp
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(71,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(72,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(255,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(446,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+﻿  Components.cpp
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(422,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(423,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(465,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(466,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
           with
           [
@@ -12,13 +12,13 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty1=float
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(199): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(486): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
               _Other2=int
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(195): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(482): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
@@ -33,69 +33,19 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty2=float
           ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
           with
           [
               _Ty=int
           ]
-          and
-          [
-              _Ty1=float
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(212): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
-          with
-          [
-              _Other1=int,
-              _Other2=double
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(200): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
-          with
-          [
-              _Other1=int,
-              _Other2=double
-          ]
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
-          with
-          [
-              _Ty=double
-          ]
-          and
-          [
-              _Ty2=float
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
-          with
-          [
-              _Ty=int
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(216): message : see reference to function template instantiation 'T &Entity::addComponent<StaticSprite,const char(&)[19],int,int,int,int,int,int>(const char (&)[19],int &&,int &&,int &&,int &&,int &&,int &&)' being compiled
-          with
-          [
-              T=StaticSprite
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
-          with
-          [
-              _Ty=double
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(227): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D*,double,float>(Vector2D *&&,double &&,float &&)' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(491): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D,Vector2D,float&,int>(Vector2D &&,Vector2D &&,float &,int &&)' being compiled
           with
           [
               T=Transform
           ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
-          with
-          [
-              _Ty=float
-          ]
-C:\Users\Lucian\Desktop\Git\Derelict\OOP Project\Game.cpp(429): message : see reference to function template instantiation 'T &Entity::addComponent<SimpleSprite,Transform&,const char(&)[22],float,float,int>(Transform &,const char (&)[22],float &&,float &&,int &&)' being compiled
-          with
-          [
-              T=SimpleSprite
-          ]
   Generating code
   1 of 887 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
-  OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Git\Derelict\Release\OOP Project.exe
+  OOP Project.vcxproj -> C:\Users\Lucian\Desktop\Derelict\Release\OOP Project.exe
