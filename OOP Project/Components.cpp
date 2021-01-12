@@ -87,7 +87,6 @@ Transform::Transform(const Vector2D& poz, const Vector2D& vel, float an, float _
     angle = an;
     mass = _mass;
 }
-
 Transform::Transform(Vector2D* poz, float an) {
      position.x = poz->x;
      position.y = poz->y;
@@ -179,7 +178,7 @@ void Transform::update(float mFT) {
     }
 }
 
-//COLIDER
+//!COLIDER
 Collider::Collider(Transform& _transform, Wireframe _vecModel) : transform(_transform) {
 
     vecModel = _vecModel;
@@ -187,7 +186,7 @@ Collider::Collider(Transform& _transform, Wireframe _vecModel) : transform(_tran
 
 }
 
-//Fuctia asta e o forma simpla de a calcula coliziuni si a aplica niste forte normale.
+//!Fuctia asta e o forma simpla de a calcula coliziuni si a aplica niste forte normale.
 void Collider::onColision(Entity& objectHit){
 
     Entity* currentEntity = this->getParentEntity();
@@ -203,7 +202,7 @@ void Collider::onColision(Entity& objectHit){
    // Vector2D newVelocityThis = transThis.velocity + difference.normalizeVector() * ( 100 / transThis.mass);
     transThis.setVel(newVelocityThis);
 }
-//Aici contextualizam forma colider-ului in lume printr-o rotatie si o translatie
+//!Aici contextualizam forma colider-ului in lume printr-o rotatie si o translatie
 void Collider::update(float mFT) {
 
     // Rotate
@@ -218,16 +217,16 @@ void Collider::update(float mFT) {
     }
 
 }
-//Nimic de desenat
+//!Nimic de desenat
 void Collider::draw()
 {
 
 }
 
-//PLAYER COMPONENT
+//!PLAYER COMPONENT
 PlayerComponent::PlayerComponent(Transform& _transform) : transform(_transform) {}
 
-//Controalele jocului
+//!Controalele jocului
 void PlayerComponent::update(float mFT) {
 
     //Set up
@@ -323,7 +322,7 @@ void PlayerComponent::update(float mFT) {
         }
     }
 }
-//Some helpful debuging
+//!Some helpful debuging
 void PlayerComponent::draw(){
     //optional debug line
     //SDL_RenderDrawLine(Game::renderer,
@@ -333,12 +332,12 @@ void PlayerComponent::draw(){
     //    transform.position.y + 100 * transform.forward.y + Level::camera_position.y
     //);
 }
-//Fuctie chemata la lovitura cu un proiectil
+//!Fuctie chemata la lovitura cu un proiectil
 void PlayerComponent::onHit() {
     life -= 1;
 }
 
-//ENEMY AI COMPONENT
+//!ENEMY AI COMPONENT
 EnemyComponent::EnemyComponent(const Entity& _player, Transform& _transform) : player(_player), transform(_transform)
 {
 }
@@ -391,7 +390,7 @@ void EnemyComponent::onHit(){
     life -= 1;
 }
 
-//SIMPLE SPRITE
+//!SIMPLE SPRITE
 SimpleSprite::SimpleSprite(Transform& _transform, const char* texturesheet, int h, int w, int rotation) :transform(_transform) {
 
     objTexture = AssetManager::Instance()->GetTexture(texturesheet);
@@ -431,7 +430,7 @@ void SimpleSprite::draw() {
     }
 }
 
-//STATIC SPRITE
+//!STATIC SPRITE
 StaticSprite::StaticSprite( const char* texturesheet, int _x, int _y,int h, int w,float _scroll,int rotation) {
     objTexture = AssetManager::Instance()->GetTexture(texturesheet);
 
@@ -474,9 +473,9 @@ void StaticSprite::draw(){
     }  
 }
 
-//FIREARM COMPONENT
+//!FIREARM COMPONENT
 FirearmComponent::FirearmComponent(Transform& _transform) : transform(_transform) {}
-//Instantiem un proiectil cu un colider potrivit, la pozitia si cu viteza potrivita
+//!Instantiem un proiectil cu un colider potrivit, la pozitia si cu viteza potrivita
 void FirearmComponent::fire() {
 
    Wireframe vecModelShip = {
@@ -503,7 +502,7 @@ void FirearmComponent::draw()
 
 }
 
-//SELF DISTRUCT COMPONENT
+//!SELF DISTRUCT COMPONENT
 SelfDistruct::SelfDistruct(){
 }
 void SelfDistruct::update(float mFT){

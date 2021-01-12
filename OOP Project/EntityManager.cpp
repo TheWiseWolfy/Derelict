@@ -9,13 +9,13 @@
 
 //Fuctii auxiliare
 
-//Aici trebuie sa indendificam daca obiectul are oricare tip de colider din joc
+//!Aici trebuie sa indendificam daca obiectul are oricare tip de colider din joc
 bool findCorectCollider(Collider** col, const Entity& en);
 
-//Aici folosim SAT pentru a detecta coliziuni
+//!Aici folosim SAT pentru a detecta coliziuni
 bool isIntersecting(const Wireframe& a, const Wireframe& b);
 
-//Actualizam toate obiectele din joc
+//!Actualizam toate obiectele din joc
 void  EntityManager::update(float mFT)
 {
     //Tot ce se intampla aici se intampla intre frame-uri
@@ -45,7 +45,7 @@ void  EntityManager::update(float mFT)
     collisionCheck();
 }
 
-//Desenam toate obiectele din joc
+//!Desenam toate obiectele din joc
 void EntityManager::draw(){
     for (auto& e : entities) {
         e->draw();
@@ -101,7 +101,7 @@ void EntityManager::clear(){
     reservedEntities.clear();
 }
 
-//"Inpachetam" obiectul intr-un smart pointer, si apoi returnam adresa propiuzisa pentru manipulare
+//!"Inpachetam" obiectul intr-un smart pointer, si apoi returnam adresa propiuzisa pentru manipulare
 Entity& EntityManager::addEntity(){
     Entity* e{ new Entity{} };
     std::unique_ptr<Entity> uPtr( e );
@@ -109,7 +109,7 @@ Entity& EntityManager::addEntity(){
     return *e;
 }
 
-//Acelasi lucru ca mai sus, dar acum pentru un vector de asteptare
+//!Acelasi lucru ca mai sus, dar acum pentru un vector de asteptare
 Entity& EntityManager::rezerveEntity(){
 
     Entity* e{ new Entity{} };
@@ -118,7 +118,7 @@ Entity& EntityManager::rezerveEntity(){
     return *e;
 }
 
-//Aici calculez coliziuni prin metoda SAT, pentru fiecare pereche de obiecte cu colider din vector.
+//!Aici calculez coliziuni prin metoda SAT, pentru fiecare pereche de obiecte cu colider din vector.
 void EntityManager::collisionCheck(){
 
     //Pentru fiecare combinatie de oricare doi colideri
@@ -151,7 +151,7 @@ void EntityManager::collisionCheck(){
         }
     }
 }
-//Aici cautam orice componenta care mosteneste de la colider, si apoi face un cast catre tipul colider, ca sa putem chema fuctia onCollision indiferent de ce colider avem pe obiect
+//!Aici cautam orice componenta care mosteneste de la colider, si apoi face un cast catre tipul colider, ca sa putem chema fuctia onCollision indiferent de ce colider avem pe obiect
 bool findCorectCollider(Collider** col,const Entity& en) {
     
     if (en.hasComponent<AsteroidCollider>()  ) {
@@ -181,7 +181,7 @@ bool findCorectCollider(Collider** col,const Entity& en) {
     return false;
 }
 
-//Collision detection
+//!Collision detection
 bool isIntersecting(const Wireframe& a, const Wireframe& b)
 {
     //parcurgem puctele primului poligom

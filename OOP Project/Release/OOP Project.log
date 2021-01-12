@@ -1,8 +1,9 @@
-﻿  Components.cpp
+﻿  AssetManager.cpp
+  Components.cpp
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(421,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(422,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(423,59): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(464,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(465,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(466,56): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
           with
           [
@@ -12,13 +13,13 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Ty1=float
           ]
-C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(486): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(485): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
               _Other2=int
           ]
-C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(482): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(481): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
           with
           [
               _Other1=double,
@@ -38,13 +39,130 @@ C:\Users\Lucian\Desktop\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'a
           [
               _Ty=int
           ]
-C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(491): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D,Vector2D,float&,int>(Vector2D &&,Vector2D &&,float &,int &&)' being compiled
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Components.cpp(490): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D,Vector2D,float&,int>(Vector2D &&,Vector2D &&,float &,int &&)' being compiled
           with
           [
               T=Transform
           ]
+  EntityManager.cpp
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(78,9): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(77,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(76,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(75,10): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(84,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(83,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(82,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(81,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(90,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(89,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(88,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(87,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(96,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(95,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(94,11): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\EntityManager.cpp(93,27): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Game.cpp
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(73,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(74,25): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(257,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(448,73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty1=float
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(201): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=double,
+              _Other2=int
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(197): message : see reference to function template instantiation 'std::pair<float,float>::pair<double,int,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=double,
+              _Other2=int
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,16): warning C4244: 'initializing': conversion from '_Ty' to '_Ty1', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty1=float
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(214): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int,
+              _Other2=double
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(202): message : see reference to function template instantiation 'std::pair<float,float>::pair<int,double,0>(_Other1 &&,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int,
+              _Other2=double
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.27.29110\include\utility(192,1): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(218): message : see reference to function template instantiation 'T &Entity::addComponent<StaticSprite,const char(&)[19],int,int,int,int,int,int>(const char (&)[19],int &&,int &&,int &&,int &&,int &&,int &&)' being compiled
+          with
+          [
+              T=StaticSprite
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(229): message : see reference to function template instantiation 'T &Entity::addComponent<Transform,Vector2D*,double,float>(Vector2D *&&,double &&,float &&)' being compiled
+          with
+          [
+              T=Transform
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Entity.h(115,37): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Game.cpp(431): message : see reference to function template instantiation 'T &Entity::addComponent<SimpleSprite,Transform&,const char(&)[22],float,float,int>(Transform &,const char (&)[22],float &&,float &&,int &&)' being compiled
+          with
+          [
+              T=SimpleSprite
+          ]
+  LevelManager.cpp
+  Main.cpp
+C:\Users\Lucian\Desktop\Derelict\OOP Project\Main.cpp(20,28): warning C4244: '=': conversion from 'Uint32' to 'float', possible loss of data
+  SoundManager.cpp
+  Vector2D.cpp
   Generating code
-  1 of 887 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  0 of 887 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
     0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code

@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+//!O clasa fundamentala pentru vectorii si calculele cu vectori din joc.
 class Vector2D
 {
 public:
@@ -14,7 +15,7 @@ public:
 	Vector2D operator+=(const Vector2D& v);
 
 
-	//Scalar multiplication
+	//!Scalar multiplication
 	friend Vector2D operator*(const Vector2D& v, float scalar);
 	friend Vector2D operator*(float scalar, const Vector2D& v);
 	friend Vector2D operator+(const Vector2D& v1, const Vector2D& v2);

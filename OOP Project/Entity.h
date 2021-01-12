@@ -9,22 +9,21 @@
 #include <cassert>
 #include <SDL.h>
 
-// Forward-declaration 
 class Entity;
 class Component;
 
-//Tip de data ID si nr maxim de componente suportate de engine
+//!Tip de data ID si nr maxim de componente suportate de engine
 using ComponentID = std::size_t; 
 constexpr std::size_t maxComponents = 32;
 
-//Pot sa ascund fuctii globale cu Internal, am nevoie doar sa primesc numere
+//!Pot sa ascund fuctii globale cu Internal, am nevoie doar sa primesc numere
 namespace Internal{
     inline ComponentID getUniqueComponentID() { //se mai foloseste noexcept dar nu sunt sigur de ce
         static ComponentID lastID= 0 ;
         return lastID++;
     }
 }
-
+//!Aici putem capata un ID unic pentru fiecare tip de componenta
 template <typename T>
 inline ComponentID getComponentTypeID() noexcept
 {
@@ -37,6 +36,7 @@ inline ComponentID getComponentTypeID() noexcept
     return typeID;
 }
 
+//!Componenta fundamentala, atasata unei entitati care incapsuleaza logica specifica. Diferite combinatii de componente rezulta in comportamente diferite
 class Component     
 {
 private:
@@ -54,28 +54,29 @@ public:
     }
 };
 
-// Un "profil" al fiecarei antitati, o metoda rapida de a stoca ce entitate are ce componenta.
-// O entitate cu un tranform ar trebui sa aiba doar "1 0 0 0..." 
+/*! Un "profil" al fiecarei antitati, o metoda rapida de a stoca ce entitate are ce componenta.
+ O entitate cu un tranform ar trebui sa aiba doar "1 0 0 0..." */
 using ComponentBitset = std::bitset<maxComponents>;
 
-//!!! Am un vector elegant cu unique_ptr pe care il accesez regulat, dar daca vreau sa accesed obiectul cu 
-//ID-ul 15, nu o sa creez 14 intervale nule, ca sa pun componenta relevanta pe locul 15. Alternativa e sa am 
-//un vector parcurs regulat, si un array al carui rol e doar sa stocheze adrese in caz ca am nevoie de ele si 
-//stiu doar ID-ul. Nu e elegant.
+/*! Am un vector elegant cu unique_ptr pe care il accesez regulat, dar daca vreau sa accesed obiectul cu 
+ID-ul 15, nu o sa creez 14 intervale nule, ca sa pun componenta relevanta pe locul 15. Alternativa e sa am 
+un vector parcurs regulat, si un array al carui rol e doar sa stocheze adrese in caz ca am nevoie de ele si 
+stiu doar ID-ul. Nu e elegant.*/
 using ComponentArray = std::array<Component*, maxComponents>;
 
-//Clasa de entitate suporta fuctionalitati de:
-//Adaugi componente, verifici daca exista, le recuperezi
-//Actualizez codul asociat tuturor componentelor
-//Entitatea este inlaturata daca are alive = "false"
-
-//Obiectul fundamental al jocului
+/*!Clasa de entitate suporta fuctionalitati de:
+Adaugi componente, verifici daca exista, le recuperezi
+Actualizez codul asociat tuturor componentelor
+Entitatea este inlaturata daca are alive = "false"s
+Obiectul fundamental al jocului, pastrat in EntityManager, care este acesat repetat in fiecare cadru al jocului.*/
 class Entity
 {
 private:
-    bool alive = true;  //entitatea incepe ca fiind "in viata"
+    //!entitatea incepe ca fiind "in viata"
+    bool alive = true; 
 
-    std::vector<std::unique_ptr<Component>> components;      //fiecare entitate incorporeaza un numar de componente
+    //!fiecare entitate incorporeaza un numar de componente
+    std::vector<std::unique_ptr<Component>> components;
     std::array<Component*, 32> componentArray;
 
     ComponentBitset componentBitset;
@@ -84,15 +85,15 @@ public:
     Entity() {
     }
 
-    // Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
+    //!Odata ce componentele virtuale au fost suprascrise, putem interactiona cu ele pur si simplu prin 2 fuctii.
     void update(float mFT);
     void draw();
 
-    // control lifetime entitate
+    //!control lifetime entitate
     bool isAlive() const { return alive; }
     void destroy() { alive = false; }
 
-    //Pot vedea daca o componenta exista, wow
+    //!Pot vedea daca o componenta exista, wow
     template<typename T>
     inline bool hasComponent() const {
         return componentBitset[getComponentTypeID<T>()];
@@ -106,9 +107,8 @@ public:
 
 };
 
-//compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
-//chema constructorul corespunzator fiecarui tip de componenta
-
+/*!compiler-ul va determina numarul si tipul de argumente necesare pentru fiecare componenta si fuctia addComponent va putea
+chema constructorul corespunzator fiecarui tip de componenta */
 template<typename T, typename ...TArgs>
  T& Entity::addComponent(TArgs && ...mArgs) {
 
@@ -130,6 +130,7 @@ template<typename T, typename ...TArgs>
     return *c;
 }
 
+ //!poti recupera orice componenta daca aceasta exista, in fuctie de ID-ul ei unic
  template<typename T>
   T& Entity::getComponent() const
  {

@@ -5,17 +5,22 @@
 #include "EntityManager.h"
 #include "Vector2D.h"
 
-//O componenta fundamentala care pastreaza coordonatele unui obiect, velocity si calculeaza legatura dintre acestea 2. 
+//!O componenta fundamentala care pastreaza coordonatele unui obiect, velocity si calculeaza legatura dintre acestea 2. 
 struct Transform : public Component{
-    //Position is game space
+    //!Pozitia un lumea jocului
     Vector2D position;
     float angle;
 
 public:
+    //Viteza unui obiect
     Vector2D velocity;
+
+    //!O valoare care influenteaza acceleratia unui obiect
     float mass = 1;
 
-    Vector2D forward;  //A vector that always points forward 
+    //!Un vector care este mereu in fata obiectului
+    Vector2D forward;  
+    //!Un vector care este mereu la stanga obiectului
     Vector2D left; 
 
     Transform();
@@ -36,16 +41,18 @@ public:
     inline float x() { return position.x; }
     inline float y() { return  position.y; }
 
+    //!Aici putem sa modificam pozitia unui obiect
     void setPos(float x, float y);
     void setPos(Vector2D newPoz);
 
+    //!Aici putem modivica vectorul viteza al unui obiect
     void setVel(float xv, float yv);
     void setVel(Vector2D newVec);
 
     void update(float mFT) override;
 };
 
-//Aici pastram informatie despre coliziunea unui obiect, si o contextualizam in lume. Exista o subclasa de obiecte care mostenesc de la acest obiect
+//!Aici pastram informatie despre coliziunea unui obiect, si o contextualizam in lume. Exista o subclasa de obiecte care mostenesc de la acest obiect
 struct Collider : public Component {
 protected:
     Transform& transform;
@@ -62,7 +69,7 @@ public:
     void draw() override;
 };
 
-//Aici se afla toate controalele si tot ce tine de player
+//!Aici se afla toate controalele si tot ce tine de player
 struct PlayerComponent : public Component {
 
     Transform& transform;
@@ -87,7 +94,7 @@ struct PlayerComponent : public Component {
 
 };
 
-//Aici avem AI-ul inamic din joc care urmareste o tinta si trage spre ea
+//!Aici avem AI-ul inamic din joc care urmareste o tinta si trage spre ea
 struct EnemyComponent : public Component {
 
     Transform& transform;
@@ -104,7 +111,7 @@ struct EnemyComponent : public Component {
     void onHit();
 };
 
-//Aici gestionam sprite-urile dinamica din joc (care se misca dupa un transform)
+//!Aici gestionam sprite-urile dinamica din joc (care se misca dupa un transform)
 struct SimpleSprite :public Component {
 private:
     Transform& transform;
@@ -121,7 +128,7 @@ public:
     void draw() override;
 };
 
-//Aici gestionam sprite-uri simple
+//!Aici gestionam sprite-uri simple
 struct StaticSprite :public Component {
 private:
     SDL_Texture* objTexture;
@@ -139,7 +146,7 @@ public:
     void draw() override;
 };
 
-//O componenta simpla care trage un proiectil cu un colider special
+//!O componenta simpla care trage un proiectil cu un colider special
 struct FirearmComponent : public Component {
 
     Transform& transform;
@@ -151,7 +158,7 @@ struct FirearmComponent : public Component {
     void draw() override;
 };
 
-//Un timer care autodistruge obiectul
+//!Un timer care autodistruge obiectul
 struct SelfDistruct : public Component {
 
     float counter = 0;

@@ -7,6 +7,7 @@
 #include "Vector2D.h"
 #include "SoundManager.h"
 
+//!Coliderul pentru asteroid
 struct AsteroidCollider : Collider{
 
 
@@ -18,6 +19,7 @@ struct AsteroidCollider : Collider{
 	}
 };
 
+//!Coliderul pentru player
 struct PlayerCollider : Collider {
 
 	PlayerCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
@@ -28,6 +30,7 @@ struct PlayerCollider : Collider {
 	}
 };
 
+//!Coliderul pentru inamic
 struct EnemyCollider : Collider {
 
 	EnemyCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
@@ -37,7 +40,7 @@ struct EnemyCollider : Collider {
 	}
 };
 
-//Un colider static
+//!Un colider static
 struct StationCollider : Collider {
 
 	StationCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}
@@ -52,7 +55,7 @@ struct StationCollider : Collider {
 	}
 };
 
-//Aici definim logica din spatele proiectilelor din joc
+//!Colider pentru proiectil.Aici definim logica din spatele proiectilelor din joc
 struct ProjectileCollider : Collider {
 
 	ProjectileCollider(Transform& _transform, Wireframe _vecModel) : Collider(_transform, _vecModel) {}

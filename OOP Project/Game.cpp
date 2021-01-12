@@ -11,14 +11,16 @@
 #include "Components.h"
 #include "Coliders.h"
 #include "LevelManager.h"
-
-SDL_Window* Game::window;        //fereastra folosita de SDL
-SDL_Renderer* Game::renderer;		//acolo unde deseneaza SDL
-SDL_Event Game::event;				//un queue cu evenimente
+ //!fereastra folosita de SDL
+SDL_Window* Game::window;       
+//!acolo unde deseneaza SDL
+SDL_Renderer* Game::renderer;		
+//!un queue cu evenimente
+SDL_Event Game::event;				
 
 EntityManager Game::entityManager;		
 int Game::score = 0;
-//Some file
+//!Some file
 
 std::fstream fs;
 int maxScore = 0;
